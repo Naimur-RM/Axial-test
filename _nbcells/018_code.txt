@@ -1,0 +1,22 @@
+_m = AxialMB(d=32, heads=4, blocks=2).eval()
+B, N, p = 2, 40, 16
+_X, _y, _S = torch.randn(B, N, p), torch.randn(B, N), torch.randn(B, p, 6)
+with torch.no_grad(): mem, typ, ori = _m(_X, _y, _S)
+print('shapes: member', tuple(mem.shape), '| type', tuple(typ.shape), '| orient', tuple(ori.shape))
+assert mem.shape == (B, p) and typ.shape == (B, p, 3) and ori.shape == (B, p, 2)
+
+pr = torch.randperm(N)
+with torch.no_grad(): mem2, _, _ = _m(_X[:, pr], _y[:, pr], _S)
+d1 = (mem - mem2).abs().max().item(); print('sample-permutation INVARIANCE   max|diff| = %.2e' % d1)
+assert d1 < 1e-4
+
+pf = torch.randperm(p)
+with torch.no_grad(): mem3, _, _ = _m(_X[:, :, pf], _y, _S[:, pf])
+d2 = (mem[:, pf] - mem3).abs().max().item(); print('feature-permutation EQUIVARIANCE max|diff| = %.2e' % d2)
+assert d2 < 1e-4
+
+for n, pp in [(20, 8), (64, 32), (30, 50)]:
+    with torch.no_grad(): o = _m(torch.randn(1, n, pp), torch.randn(1, n), torch.randn(1, pp, 6))[0]
+    assert o.shape == (1, pp)
+print('variable (N, p) accepted -> ok')
+print('[VALIDATION] invariances + shapes + variable sizes -> PASS')

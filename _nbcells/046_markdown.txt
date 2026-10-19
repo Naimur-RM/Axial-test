@@ -1,0 +1,2 @@
+## 14 - Final report
+Writes `REPORT.md` with expectations vs. what actually happened, plus honest caveats.

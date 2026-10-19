@@ -1,0 +1,14 @@
+names = list(bench)
+x = np.arange(len(names)); w = 0.38
+fig, ax = plt.subplots(1, 3, figsize=(13, 3.8))
+for k, (met, im, title) in enumerate([('precision','iamb_precision','Precision'),
+                                      ('recall','iamb_recall','Recall'),
+                                      ('fdr','iamb_fdr','Empirical FDR')]):
+    ax[k].bar(x - w/2, [bench[n][met] for n in names], w, label='AxialMB', color='#1D9E75')
+    ax[k].bar(x + w/2, [bench[n][im] for n in names], w, label='IAMB', color='#888')
+    if met == 'fdr':
+        ax[k].axhline(CFG['alpha'], ls='--', color='#D85A30', label='nominal')
+    ax[k].set_xticks(x); ax[k].set_xticklabels(names, rotation=15)
+    ax[k].set_ylim(0, 1.05); ax[k].set_title(title); ax[k].legend(fontsize=8)
+fig.suptitle('Real causal benchmarks (true DAG known)', y=1.02)
+savefig(fig, '06_benchmarks.png'); plt.show()

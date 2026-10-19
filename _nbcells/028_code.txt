@@ -1,0 +1,20 @@
+w = generate_world(np.random.default_rng(99), p=48, N=CFG['eval_N'], target_mb=6)
+mb_idx = np.where(w['member'] == 1)[0]; nz_idx = np.where(w['member'] == 0)[0]
+curves = {}
+for name, j in [('true member', int(mb_idx[0])), ('noise feature', int(nz_idx[0]))]:
+    b = Bet(w['X'][:, j], w['y'], None); W = 1.0; c = [1.0]
+    for t in range(len(w['y'])): W *= b.step(t); c.append(W)
+    curves[name] = c; print('%-14s final wealth = %.3e' % (name, W))
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.plot(curves['true member'], color='#1D9E75', lw=2, label='true member')
+ax.plot(curves['noise feature'], color='#888', lw=2, label='noise feature')
+ax.axhline(1 / CFG['alpha'], ls='--', color='#D85A30', label='bar 1/alpha')
+ax.set_yscale('log'); ax.set_xlabel('samples seen'); ax.set_ylabel('wealth (log)')
+ax.set_title('E-process evidence accumulation'); ax.legend()
+savefig(fig, '02_wealth_curves.png'); plt.show()
+
+toy = {'A': 480., 'B': 300., 'C': 95., 'D': 41., 'E': 1.3, 'F': .4, 'G': 2.1}
+sel, bar = ebh(toy, 0.10); print('e-BH toy selection:', sel, '| bar e >=', round(bar, 1))
+assert set(sel) == {'A', 'B', 'C', 'D'}
+print('[VALIDATION] wealth separates members from noise; e-BH correct -> PASS')

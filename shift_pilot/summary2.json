@@ -1,0 +1,120 @@
+{
+ "n=300 descendant (count=235)": {
+  "oracle_pa/logit2": 0.119,
+  "oracle_pa/gbm": 0.14,
+  "oracle_pa/big": 0.06,
+  "proposer_good": 0.072,
+  "proposer_bad": 0.102,
+  "greedy": 0.034,
+  "proposer_bad+greedy": 0.009
+ },
+ "n=300 other (count=365)": {
+  "oracle_pa/logit2": 0.044,
+  "oracle_pa/gbm": 0.041,
+  "oracle_pa/big": 0.027,
+  "proposer_good": 0.016,
+  "proposer_bad": 0.027,
+  "greedy": 0.003,
+  "proposer_bad+greedy": 0.0
+ },
+ "n=300 target (count=120)": {
+  "oracle_pa/logit2": 1.0,
+  "oracle_pa/gbm": 1.0,
+  "oracle_pa/big": 1.0,
+  "proposer_good": 0.95,
+  "proposer_bad": 0.908,
+  "greedy": 0.758,
+  "proposer_bad+greedy": 0.75
+ },
+ "n=1000 descendant (count=209)": {
+  "oracle_pa/logit2": 0.091,
+  "oracle_pa/gbm": 0.057,
+  "oracle_pa/big": 0.072,
+  "proposer_good": 0.038,
+  "proposer_bad": 0.081,
+  "greedy": 0.033,
+  "proposer_bad+greedy": 0.01
+ },
+ "n=1000 other (count=391)": {
+  "oracle_pa/logit2": 0.049,
+  "oracle_pa/gbm": 0.054,
+  "oracle_pa/big": 0.043,
+  "proposer_good": 0.028,
+  "proposer_bad": 0.036,
+  "greedy": 0.0,
+  "proposer_bad+greedy": 0.0
+ },
+ "n=1000 target (count=120)": {
+  "oracle_pa/logit2": 0.983,
+  "oracle_pa/gbm": 0.983,
+  "oracle_pa/big": 0.983,
+  "proposer_good": 0.967,
+  "proposer_bad": 0.917,
+  "greedy": 0.875,
+  "proposer_bad+greedy": 0.85
+ },
+ "n=300 target/func (count=16)": {
+  "oracle_pa/logit2": 1.0,
+  "oracle_pa/gbm": 1.0,
+  "oracle_pa/big": 1.0,
+  "proposer_good": 0.938,
+  "proposer_bad": 0.75,
+  "greedy": 0.312,
+  "proposer_bad+greedy": 0.312
+ },
+ "n=300 target/mean (count=67)": {
+  "oracle_pa/logit2": 1.0,
+  "oracle_pa/gbm": 1.0,
+  "oracle_pa/big": 1.0,
+  "proposer_good": 0.97,
+  "proposer_bad": 0.985,
+  "greedy": 0.91,
+  "proposer_bad+greedy": 0.91
+ },
+ "n=300 target/scale (count=37)": {
+  "oracle_pa/logit2": 1.0,
+  "oracle_pa/gbm": 1.0,
+  "oracle_pa/big": 1.0,
+  "proposer_good": 0.919,
+  "proposer_bad": 0.838,
+  "greedy": 0.676,
+  "proposer_bad+greedy": 0.649
+ },
+ "n=1000 target/func (count=15)": {
+  "oracle_pa/logit2": 0.867,
+  "oracle_pa/gbm": 0.867,
+  "oracle_pa/big": 0.867,
+  "proposer_good": 0.867,
+  "proposer_bad": 0.6,
+  "greedy": 0.467,
+  "proposer_bad+greedy": 0.4
+ },
+ "n=1000 target/mean (count=62)": {
+  "oracle_pa/logit2": 1.0,
+  "oracle_pa/gbm": 1.0,
+  "oracle_pa/big": 1.0,
+  "proposer_good": 1.0,
+  "proposer_bad": 1.0,
+  "greedy": 1.0,
+  "proposer_bad+greedy": 1.0
+ },
+ "n=1000 target/scale (count=43)": {
+  "oracle_pa/logit2": 1.0,
+  "oracle_pa/gbm": 1.0,
+  "oracle_pa/big": 1.0,
+  "proposer_good": 0.953,
+  "proposer_bad": 0.907,
+  "greedy": 0.837,
+  "proposer_bad+greedy": 0.791
+ },
+ "n=300 mean tests per variable": {
+  "proposer_good": 2.76,
+  "proposer_bad": 2.97,
+  "greedy": 1.68
+ },
+ "n=1000 mean tests per variable": {
+  "proposer_good": 2.76,
+  "proposer_bad": 2.96,
+  "greedy": 1.78
+ }
+}

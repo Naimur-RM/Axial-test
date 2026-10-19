@@ -1,0 +1,7 @@
+{
+  "checkpoint": "output\\axialmb_evaluation\\checkpoints\\axial_mb.pt",
+  "tier": "A",
+  "steps_logged": 5000,
+  "final_train_auc": 0.9159663865546218,
+  "device": "cuda"
+}

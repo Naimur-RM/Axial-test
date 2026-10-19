@@ -1,0 +1,50 @@
+import warnings, numpy as np
+warnings.filterwarnings('ignore')
+
+# name -> (#nodes). Only networks with <= MAX_FEATURES nodes are usable here.
+BENCHMARKS = {'survey':6, 'cancer':5, 'earthquake':5, 'asia':8, 'sachs':11,
+              'child':20, 'insurance':27, 'water':32, 'mildew':35, 'alarm':37}
+
+def load_network(name):
+    from pgmpy.utils import get_example_model
+    return get_example_model(name)
+
+def true_markov_blankets(model):
+    """Exact MB of every node from the ground-truth DAG."""
+    nodes = list(model.nodes())
+    pa = {n: set(model.get_parents(n)) for n in nodes}
+    ch = {n: set(model.get_children(n)) for n in nodes}
+    mb = {}
+    for t in nodes:
+        s = set(pa[t]) | set(ch[t])
+        for c in ch[t]:
+            s |= (pa[c] - {t})
+        mb[t] = s - {t}
+    return nodes, mb, pa, ch
+
+def sample_numeric(model, n, seed=0):
+    """Forward-sample the real CPTs, then ordinal-encode to numeric.
+    NOTE: these networks are DISCRETE; our pipeline is continuous, so this is a
+    continuous relaxation. Dependence is preserved, but the encoding imposes an
+    arbitrary order on multi-category variables -- an honest limitation."""
+    from pgmpy.sampling import BayesianModelSampling
+    df = BayesianModelSampling(model).forward_sample(size=n, seed=seed,
+                                                     show_progress=False)
+    cols = list(df.columns)
+    X = np.zeros((len(df), len(cols)), dtype=np.float32)
+    for j, c in enumerate(cols):
+        codes = df[c].astype('category').cat.codes.to_numpy().astype(np.float32)
+        X[:, j] = codes
+    X = (X - X.mean(0)) / (X.std(0) + 1e-8)
+    return X, cols
+
+def benchmark_arrays(name, n, seed=0, max_features=50):
+    """Returns X (n,p), column names, and the true-MB index sets per target."""
+    model = load_network(name)
+    nodes, mb, pa, ch = true_markov_blankets(model)
+    if len(nodes) > max_features:
+        raise ValueError(f'{name} has {len(nodes)} nodes > max_features={max_features}')
+    X, cols = sample_numeric(model, n, seed)
+    idx = {c: i for i, c in enumerate(cols)}
+    mb_idx = {idx[t]: sorted(idx[m] for m in mb[t]) for t in nodes}
+    return X, cols, mb_idx

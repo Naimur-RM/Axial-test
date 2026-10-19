@@ -1,0 +1,5 @@
+## 8 - Fusion stacker (late fusion)
+A logistic stacker on `[transformer logit, 6 statistical scores]`, fitted on **held-out** worlds.
+
+**What we expect:** fusion AUC >= max(transformer alone, statistics alone). If the transformer is
+strong, the gain is small; the real value shows up out-of-distribution (Section 11).

@@ -1,0 +1,309 @@
+{
+  "task": "classical_mb_vs_discovery",
+  "what_is_measured": "boundary overlap (parents, children, spouses). Orientation is not scored.",
+  "alpha_iamb": 0.05,
+  "fdr_axial": 0.1,
+  "n_worlds": 8,
+  "p": 18,
+  "n": 800,
+  "checkpoint": "output/axialmb_evaluation/checkpoints/axial_mb.pt",
+  "stablepfn": "pass --stablepfn-checkpoint to score the StablePFN discovery head",
+  "summary": {
+    "iamb": {
+      "n": 8,
+      "child_recall": 1.0,
+      "child_recall_n": 8,
+      "f1": 0.9407051282051282,
+      "f1_n": 8,
+      "fdr": 0.0744047619047619,
+      "fdr_n": 8,
+      "n_children": 2.5,
+      "n_children_n": 8,
+      "n_parents": 1.375,
+      "n_parents_n": 8,
+      "n_pred": 6.375,
+      "n_pred_n": 8,
+      "n_spouses": 2.25,
+      "n_spouses_n": 8,
+      "n_truth": 6.125,
+      "n_truth_n": 8,
+      "parent_recall": 1.0,
+      "parent_recall_n": 6,
+      "precision": 0.9255952380952381,
+      "precision_n": 8,
+      "recall": 0.9583333333333334,
+      "recall_n": 8,
+      "spouse_recall": 0.8571428571428571,
+      "spouse_recall_n": 7,
+      "tp": 5.875,
+      "tp_n": 8
+    },
+    "axialmb": {
+      "n": 8,
+      "child_recall": 0.9166666666666666,
+      "child_recall_n": 8,
+      "f1": 0.9356060606060606,
+      "f1_n": 8,
+      "fdr": 0.0,
+      "fdr_n": 8,
+      "n_children": 2.5,
+      "n_children_n": 8,
+      "n_parents": 1.375,
+      "n_parents_n": 8,
+      "n_pred": 5.5,
+      "n_pred_n": 8,
+      "n_spouses": 2.25,
+      "n_spouses_n": 8,
+      "n_truth": 6.125,
+      "n_truth_n": 8,
+      "parent_recall": 1.0,
+      "parent_recall_n": 6,
+      "precision": 1.0,
+      "precision_n": 8,
+      "recall": 0.8958333333333334,
+      "recall_n": 8,
+      "spouse_recall": 0.7857142857142857,
+      "spouse_recall_n": 7,
+      "tp": 5.5,
+      "tp_n": 8
+    },
+    "stablepfn_discovery": {
+      "status": "skipped",
+      "reason": "pass --stablepfn-checkpoint to score the StablePFN discovery head"
+    }
+  },
+  "worlds": [
+    {
+      "world": 0,
+      "family": "latent_confounder",
+      "mech": "threshold",
+      "iamb": [
+        0,
+        7,
+        10,
+        11,
+        13,
+        14
+      ],
+      "truth_boundary": [
+        0,
+        7,
+        10,
+        11,
+        13,
+        14
+      ],
+      "axialmb": [
+        0,
+        7,
+        10,
+        11,
+        13,
+        14
+      ]
+    },
+    {
+      "world": 1,
+      "family": "modular",
+      "mech": "threshold",
+      "iamb": [
+        2,
+        4,
+        9,
+        12,
+        14,
+        16
+      ],
+      "truth_boundary": [
+        2,
+        4,
+        9,
+        12,
+        14,
+        16
+      ],
+      "axialmb": [
+        2,
+        4,
+        9,
+        12,
+        14,
+        16
+      ]
+    },
+    {
+      "world": 2,
+      "family": "lattice",
+      "mech": "heavy_tail",
+      "iamb": [
+        1,
+        2,
+        5,
+        6,
+        9,
+        10
+      ],
+      "truth_boundary": [
+        1,
+        2,
+        5,
+        6,
+        9,
+        10
+      ],
+      "axialmb": [
+        1,
+        2,
+        5,
+        6,
+        9,
+        10
+      ]
+    },
+    {
+      "world": 3,
+      "family": "modular",
+      "mech": "poly",
+      "iamb": [
+        2,
+        4,
+        8,
+        10,
+        14,
+        15
+      ],
+      "truth_boundary": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        14
+      ],
+      "axialmb": [
+        2,
+        10,
+        14
+      ]
+    },
+    {
+      "world": 4,
+      "family": "erdos_renyi",
+      "mech": "mlp",
+      "iamb": [
+        0,
+        4,
+        5,
+        6,
+        11,
+        12,
+        16
+      ],
+      "truth_boundary": [
+        0,
+        6,
+        8,
+        11,
+        12,
+        16
+      ],
+      "axialmb": [
+        0,
+        6,
+        11,
+        12,
+        16
+      ]
+    },
+    {
+      "world": 5,
+      "family": "small_world",
+      "mech": "heteroscedastic",
+      "iamb": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "truth_boundary": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "axialmb": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ]
+    },
+    {
+      "world": 6,
+      "family": "tree",
+      "mech": "threshold",
+      "iamb": [
+        0,
+        1,
+        2,
+        6,
+        7,
+        9,
+        15
+      ],
+      "truth_boundary": [
+        0,
+        1,
+        2,
+        6,
+        7,
+        9,
+        15
+      ],
+      "axialmb": [
+        0,
+        1,
+        2,
+        6,
+        7,
+        9,
+        15
+      ]
+    },
+    {
+      "world": 7,
+      "family": "collider_hub",
+      "mech": "heavy_tail",
+      "iamb": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        10,
+        12
+      ],
+      "truth_boundary": [
+        0,
+        1,
+        2,
+        6,
+        10,
+        12
+      ],
+      "axialmb": [
+        0,
+        1,
+        2,
+        6,
+        10,
+        12
+      ]
+    }
+  ]
+}

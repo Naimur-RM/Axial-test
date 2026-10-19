@@ -1,0 +1,25 @@
+## 12 - Real causal benchmarks: asia, survey, sachs, child (and more)
+These are the standard **bnlearn benchmark Bayesian networks**, bundled offline with `pgmpy`
+(no download needed). For each network the **true DAG is known**, so the exact Markov blanket of
+every node is known: `MB(t) = parents(t) U children(t) U co-parents-of-children(t)`.
+
+Protocol: forward-sample the network's **real conditional probability tables**, then take every
+node in turn as the target and score the recovered blanket against ground truth. We also run
+classical **IAMB** on the same data for comparison.
+
+**The discrete fix (this is what makes the certificate hold here).** These networks are discrete.
+Ordinal-coding them into a *linear* nuisance is badly misspecified: the true `E[Xj|Z]` depends on
+the categories and their interactions. The leftover structure contaminates both residuals and
+inflates FDR. `infer.py` now detects discrete columns automatically and switches the nuisance design
+to **one-hot + pairwise interactions** (continuous data is left untouched). Measured effect at
+N=4000:
+
+| dataset | FDR before | FDR after | precision before -> after |
+|---|---|---|---|
+| sachs | 0.34 | **0.08** | 0.66 -> 0.92 |
+| child | 0.32 | **0.10** | 0.68 -> 0.90 |
+| asia  | 0.39 | 0.26 | 0.61 -> 0.74 |
+
+**Why `asia` still misses.** Its `either` node is a *deterministic* OR of `lung` and `tub`. Determinism
+violates **faithfulness**, which every constraint-based MB method assumes -- IAMB fails there too. The
+cell below detects such nodes automatically so the failure is attributed, not hidden.

@@ -1,0 +1,18 @@
+MB_GRID = [5, 10, 15, 25]
+curve = {}
+for want in MB_GRID:
+    p = min(MAX_FEATURES, max(40, want * 2))
+    curve[want] = evaluate(6, TRAIN_FAMILIES, p, CFG['eval_N'], want, SEED + 20 + want)
+    r = curve[want]
+    print('|MB|=%2d (p=%3d): AUC %.2f | prec %.2f | recall %.2f | FDR %.2f'
+          % (want, p, r['auc'], r['precision'], r['recall'], r['fdp']))
+save_json(curve, 'mb_scaling.json')
+
+fig, ax = plt.subplots(figsize=(7.5, 4))
+for m, c in [('auc', '#534AB7'), ('precision', '#1D9E75'), ('recall', '#D85A30')]:
+    ax.plot(MB_GRID, [curve[k][m] for k in MB_GRID], 'o-', color=c, label=m)
+ax.plot(MB_GRID, [curve[k]['fdp'] for k in MB_GRID], 's--', color='#888', label='empirical FDR')
+ax.axhline(CFG['alpha'], ls=':', color='#D85A30', label='nominal FDR')
+ax.set_xlabel('|MB| (true blanket size)'); ax.set_ylim(0, 1.05)
+ax.set_title('Performance vs blanket size'); ax.legend(fontsize=8)
+savefig(fig, '04_mb_scaling.png'); plt.show()

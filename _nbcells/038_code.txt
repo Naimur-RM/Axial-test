@@ -1,0 +1,92 @@
+from math import erf, sqrt, log
+
+def _pcorr(X, y, j, Z):
+    xj = X[:, j]
+    if Z:
+        A = np.column_stack([np.ones(len(y)), X[:, Z]])
+        xj = xj - A @ np.linalg.lstsq(A, xj, rcond=None)[0]
+        yr = y - A @ np.linalg.lstsq(A, y, rcond=None)[0]
+    else: xj, yr = xj - xj.mean(), y - y.mean()
+    return float(xj @ yr) / (np.linalg.norm(xj) * np.linalg.norm(yr) + 1e-12)
+
+def _pval(r, n, k):
+    r = np.clip(r, -.999999, .999999)
+    z = .5 * log((1 + r) / (1 - r)) * sqrt(max(n - k - 3, 1))
+    return 2 * (1 - .5 * (1 + erf(abs(z) / sqrt(2))))
+
+def iamb(X, y, alpha=.05, max_cond=8):
+    N, p = X.shape; mb = []; changed = True
+    while changed:
+        changed = False; bj, bp = None, alpha
+        for j in range(p):
+            if j in mb: continue
+            pv = _pval(_pcorr(X, y, j, mb[:max_cond]), N, len(mb[:max_cond]))
+            if pv < bp: bp, bj = pv, j
+        if bj is not None: mb.append(bj); changed = True
+    for j in list(mb):
+        Z = [z for z in mb if z != j][:max_cond]
+        if _pval(_pcorr(X, y, j, Z), N, len(Z)) >= alpha: mb.remove(j)
+    return sorted(mb)
+
+def _score(sel, truth):
+    sel = set(sel); tp = len(sel & truth)
+    return (tp / len(sel) if sel else 1.0, tp / max(len(truth), 1),
+            (len(sel) - tp) / max(len(sel), 1))
+
+def evaluate_benchmark(name, n_samples, alpha, seed=0, run_iamb=True):
+    X, cols, mb_idx = benchmark_arrays(name, n=n_samples, seed=seed,
+                                       max_features=MAX_FEATURES)
+    ours, base = [], []
+    for t, truth_cols in mb_idx.items():
+        truth_cols = set(truth_cols)
+        if not truth_cols: continue
+        keep = [j for j in range(X.shape[1]) if j != t]
+        remap = {o: i for i, o in enumerate(keep)}
+        truth = {remap[j] for j in truth_cols}
+        Xr, yr = X[:, keep], X[:, t]
+        r = run_pipeline(model, Xr, yr, fusion=fusion, alpha=alpha,
+                         block=CFG['block'], device=DEVICE)
+        ours.append(_score(r['blanket'], truth))
+        if run_iamb: base.append(_score(iamb(Xr, yr), truth))
+    A = np.array(ours); B = np.array(base) if base else None
+    out = dict(p=X.shape[1], targets=len(ours),
+               precision=float(A[:, 0].mean()), recall=float(A[:, 1].mean()),
+               fdr=float(A[:, 2].mean()))
+    if B is not None:
+        out.update(iamb_precision=float(B[:, 0].mean()),
+                   iamb_recall=float(B[:, 1].mean()), iamb_fdr=float(B[:, 2].mean()))
+    return out
+
+# Flag nodes that are a DETERMINISTIC function of their parents. Determinism
+# violates faithfulness and caps what ANY constraint-based MB method can do.
+def determinism_report(name):
+    from pgmpy.sampling import BayesianModelSampling
+    mod = load_network(name)
+    df = BayesianModelSampling(mod).forward_sample(size=3000, seed=0, show_progress=False)
+    bad = []
+    for n in mod.nodes():
+        pa = list(mod.get_parents(n))
+        if pa and (df.groupby(pa)[n].nunique() == 1).all(): bad.append(n)
+    return bad
+
+BENCH_LIST = ['survey', 'asia', 'sachs', 'child']   # add 'insurance','water','alarm' for more
+BENCH_N = 4000
+bench = {}
+print('%-10s %3s %7s | %-21s | %-21s' % ('dataset','p','targets','AxialMB (ours)','IAMB (classical)'))
+print('%-10s %3s %7s | %6s %6s %6s | %6s %6s %6s'
+      % ('','','', 'prec','rec','FDR','prec','rec','FDR'))
+print('-' * 76)
+for nm in BENCH_LIST:
+    r = evaluate_benchmark(nm, BENCH_N, CFG['alpha'], seed=SEED)
+    bench[nm] = r
+    print('%-10s %3d %7d | %6.2f %6.2f %6.2f | %6.2f %6.2f %6.2f'
+          % (nm, r['p'], r['targets'], r['precision'], r['recall'], r['fdr'],
+             r['iamb_precision'], r['iamb_recall'], r['iamb_fdr']))
+det = {nm: determinism_report(nm) for nm in BENCH_LIST}
+print('\ndeterministic nodes (violate faithfulness -> cap every CI-based method):')
+for nm, d_ in det.items():
+    print('  %-9s %s' % (nm, d_ if d_ else 'none'))
+save_json({'metrics': bench, 'deterministic_nodes': det}, 'benchmark_results.json')
+assert all(bench[n]['targets'] > 0 for n in BENCH_LIST)
+print('\nnominal FDR = %.2f' % CFG['alpha'])
+print('[VALIDATION] real benchmarks evaluated -> PASS')

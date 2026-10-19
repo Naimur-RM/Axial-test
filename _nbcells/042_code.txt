@@ -1,0 +1,36 @@
+def ts_evaluate(d, L, N, nonlinear, density, trials=3, alpha=0.10, seed0=0):
+    P, R, F = [], [], []
+    for s in range(trials):
+        X, true = var_process(d=d, L=L, N=N, rng=np.random.default_rng(seed0 + s),
+                              density=density, nonlinear=nonlinear)
+        for tgt in range(d):
+            tc = true_parent_columns(true, tgt, L, d)
+            if not tc: continue
+            Z, y, _ = lagged_design(X, tgt, L, max_features=MAX_FEATURES)
+            r = run_pipeline(model, Z, y, fusion=fusion, alpha=alpha,
+                             block=CFG['block'], device=DEVICE)
+            sel = set(r['blanket']); tp = len(sel & tc)
+            P.append(tp / len(sel) if sel else 1.0); R.append(tp / len(tc))
+            F.append((len(sel) - tp) / max(len(sel), 1))
+    return dict(precision=float(np.mean(P)), recall=float(np.mean(R)),
+                fdr=float(np.mean(F)), targets=len(P))
+
+TS_SETTINGS = [
+    ('linear VAR  d=5  L=2', dict(d=5,  L=2, N=4000, nonlinear=False, density=0.15)),
+    ('linear VAR  d=10 L=2', dict(d=10, L=2, N=4000, nonlinear=False, density=0.12)),
+    ('nonlinear   d=10 L=2', dict(d=10, L=2, N=4000, nonlinear=True,  density=0.12)),
+    ('DENSE (caveat case)  ', dict(d=10, L=3, N=4000, nonlinear=False, density=0.25)),
+]
+ts = {}
+print('ZERO-SHOT time series -- model never trained on time series. nominal FDR = %.2f' % CFG['alpha'])
+print('%-22s %5s %7s %6s %6s %6s' % ('setting', 'cands', 'targets', 'prec', 'rec', 'FDR'))
+print('-' * 60)
+for tag, kw in TS_SETTINGS:
+    r = ts_evaluate(**kw); ts[tag.strip()] = dict(r, **kw)
+    print('%-22s %5d %7d %6.2f %6.2f %6.2f'
+          % (tag, kw['d'] * kw['L'], r['targets'], r['precision'], r['recall'], r['fdr']))
+save_json(ts, 'timeseries_results.json')
+print('\nThe DENSE row is the documented caveat: with a truncated lag window the recovered')
+print('set is the conditional-dependence set, which is larger than the parent set.')
+assert ts['linear VAR  d=5  L=2']['targets'] > 0
+print('[VALIDATION] zero-shot time-series evaluation -> PASS')

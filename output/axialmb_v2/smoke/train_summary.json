@@ -1,0 +1,8 @@
+{
+  "tier": "smoke",
+  "steps_done": 35,
+  "best_val_f1": 0.4909,
+  "device": "cuda",
+  "best": "output\\axialmb_v2\\smoke\\best.pt",
+  "last": "output\\axialmb_v2\\smoke\\last.pt"
+}

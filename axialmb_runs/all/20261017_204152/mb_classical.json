@@ -1,0 +1,125 @@
+{
+  "task": "classical_mb_vs_discovery",
+  "what_is_measured": "boundary overlap (parents, children, spouses). Orientation is not scored.",
+  "alpha_iamb": 0.05,
+  "fdr_axial": 0.1,
+  "n_worlds": 2,
+  "p": 10,
+  "n": 250,
+  "checkpoint": "axialmb_runs/checkpoints/axial_mb.pt",
+  "stablepfn": "pass --stablepfn-checkpoint to score the StablePFN discovery head",
+  "summary": {
+    "iamb": {
+      "n": 2,
+      "child_recall": 1.0,
+      "child_recall_n": 2,
+      "f1": 1.0,
+      "f1_n": 2,
+      "fdr": 0.0,
+      "fdr_n": 2,
+      "n_children": 1.5,
+      "n_children_n": 2,
+      "n_parents": 1.5,
+      "n_parents_n": 2,
+      "n_pred": 4.5,
+      "n_pred_n": 2,
+      "n_spouses": 1.5,
+      "n_spouses_n": 2,
+      "n_truth": 4.5,
+      "n_truth_n": 2,
+      "parent_recall": 1.0,
+      "parent_recall_n": 2,
+      "precision": 1.0,
+      "precision_n": 2,
+      "recall": 1.0,
+      "recall_n": 2,
+      "spouse_recall": 1.0,
+      "spouse_recall_n": 2,
+      "tp": 4.5,
+      "tp_n": 2
+    },
+    "axialmb": {
+      "n": 2,
+      "child_recall": 1.0,
+      "child_recall_n": 2,
+      "f1": 0.9285714285714286,
+      "f1_n": 2,
+      "fdr": 0.0,
+      "fdr_n": 2,
+      "n_children": 1.5,
+      "n_children_n": 2,
+      "n_parents": 1.5,
+      "n_parents_n": 2,
+      "n_pred": 4.0,
+      "n_pred_n": 2,
+      "n_spouses": 1.5,
+      "n_spouses_n": 2,
+      "n_truth": 4.5,
+      "n_truth_n": 2,
+      "parent_recall": 1.0,
+      "parent_recall_n": 2,
+      "precision": 1.0,
+      "precision_n": 2,
+      "recall": 0.875,
+      "recall_n": 2,
+      "spouse_recall": 0.5,
+      "spouse_recall_n": 2,
+      "tp": 4.0,
+      "tp_n": 2
+    },
+    "stablepfn_discovery": {
+      "status": "skipped",
+      "reason": "pass --stablepfn-checkpoint to score the StablePFN discovery head"
+    }
+  },
+  "worlds": [
+    {
+      "world": 0,
+      "family": "latent_confounder",
+      "mech": "threshold",
+      "iamb": [
+        0,
+        5,
+        6,
+        7,
+        8
+      ],
+      "truth_boundary": [
+        0,
+        5,
+        6,
+        7,
+        8
+      ],
+      "axialmb": [
+        0,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "world": 1,
+      "family": "modular",
+      "mech": "linear_gaussian",
+      "iamb": [
+        2,
+        3,
+        6,
+        8
+      ],
+      "truth_boundary": [
+        2,
+        3,
+        6,
+        8
+      ],
+      "axialmb": [
+        2,
+        3,
+        8
+      ]
+    }
+  ]
+}

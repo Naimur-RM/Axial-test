@@ -1,0 +1,6 @@
+## 7 - Pretraining
+Worlds are generated **on the fly** (nothing stored). The held-out family is excluded so we can
+measure out-of-distribution generalisation later.
+
+**What we expect:** loss falls and membership AUC rises well above 0.5. The orientation loss stays
+higher — direction is genuinely harder, and is only trained on identifiable mechanisms.

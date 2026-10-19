@@ -1,0 +1,55 @@
+# Set the tier. 'A' = proof of concept that finishes in a Colab session.
+# 'B' = research scale (what you asked for). Batch size is chosen AUTOMATICALLY
+# from the detected GPU so Tier B does not run out of memory.
+TIER = 'B'
+
+PRESETS = {
+ 'A': dict(d=64,  heads=4, blocks=4,  steps=1200,  p_min=20, p_max=50,
+           N_min=128, N_max=256, eval_N=1000, target_batch=8),
+ 'B': dict(d=256, heads=8, blocks=12, steps=20000, p_min=20, p_max=50,
+           N_min=128, N_max=256, eval_N=2000, target_batch=16),
+}
+CFG = dict(PRESETS[TIER], dropout=0.0, lr=2e-3, mb_frac_max=0.50,
+           alpha=0.10,          # FDR target
+           block=20,            # samples per betting round
+           amp=True,            # bfloat16 autocast (halves activation memory)
+           grad_checkpoint=True)# recompute blocks in backward (big memory saving)
+
+# ---- TIME control (this is what stops Tier B looking "stuck") --------------
+# Training stops CLEANLY at this wall-clock budget, saves a checkpoint, and the
+# rest of the notebook runs. Re-run the training cell to continue from where it
+# stopped. Section 7 probes the real speed first and prints the projection.
+CFG['max_minutes'] = 20 if TIER == 'A' else 120
+CFG['log_every']   = 25          # keep small: silence is what looks like a hang
+CFG['ckpt_every']  = 100
+
+# ---- automatic memory planning -------------------------------------------
+# The axial model holds a (B, N, p+1, d) tensor and each block saves ~6 of them.
+# That is why naive Tier B needs ~77 GB. Checkpointing + bf16 brings it to ~10 GB.
+if DEVICE == 'cuda':
+    os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+    total_gb = torch.cuda.get_device_properties(0).total_memory / 1e9
+else:
+    total_gb = 4.0
+BUDGET_GB = max(1.5, total_gb * 0.60)        # headroom for weights, Adam, fragmentation
+CFG['micro_batch'], CFG['accum_steps'] = autoconfig(
+    BUDGET_GB, CFG['d'], CFG['blocks'], CFG['p_max'], CFG['N_max'],
+    bf16=CFG['amp'] and DEVICE == 'cuda', grad_checkpoint=CFG['grad_checkpoint'],
+    B_max=CFG['target_batch'])
+CFG['batch'] = CFG['micro_batch']
+
+est = estimate_memory_gb(CFG['micro_batch'], CFG['N_max'], CFG['p_max'], CFG['d'],
+                         CFG['blocks'], CFG['amp'] and DEVICE == 'cuda', CFG['grad_checkpoint'])
+naive = estimate_memory_gb(CFG['target_batch'], CFG['N_max'], CFG['p_max'], CFG['d'],
+                           CFG['blocks'], False, False)
+print(f'TIER {TIER} | GPU total {total_gb:.1f} GB | budget {BUDGET_GB:.1f} GB')
+print(f'  micro-batch {CFG["micro_batch"]} x accum {CFG["accum_steps"]} '
+      f'= effective batch {CFG["micro_batch"]*CFG["accum_steps"]}')
+print(f'  estimated activation memory: {est:.1f} GB   (naive fp32, no checkpointing: {naive:.0f} GB)')
+if est > BUDGET_GB: print('  WARNING: still tight -- training will auto-halve the batch on OOM.')
+save_json({**CFG, 'tier': TIER, 'holdout_family': 'lattice', 'gpu_total_gb': total_gb}, 'config.json')
+HOLDOUT_FAMILY = 'lattice'   # never seen in training -> measures OOD generalisation
+assert CFG['micro_batch'] >= 1
+assert CFG['p_max'] <= MAX_FEATURES, 'p_max exceeds the project cap'
+print(f'SCOPE CAPS: p <= {MAX_FEATURES} features, |MB| <= {MAX_MB}')
+print('[VALIDATION] config + memory plan + scope caps -> PASS')

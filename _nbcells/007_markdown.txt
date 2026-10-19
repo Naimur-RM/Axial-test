@@ -1,0 +1,16 @@
+## 4 - Synthetic prior: 9 graph families x 9 mechanisms
+
+**Families** (different MB geometries): Erdos-Renyi, scale-free (hubs), small-world, modular/SBM,
+layered DAG, tree, lattice, **collider-rich hub** (spouse-heavy, on purpose), latent-confounder.
+
+**Mechanisms**: linear-Gaussian, linear non-Gaussian, random MLP, polynomial, sigmoid, threshold,
+multiplicative, heteroscedastic, heavy-tailed.
+
+**Labels produced per feature:** `member` (in MB or not), `type` (none / PC / spouse),
+`orient` (parent / child, `-1` if not PC).
+
+**Identifiability note (important):** parent-vs-child is **not identifiable** from observational
+linear-Gaussian data. So `identifiable=False` for that mechanism and the orientation loss is *masked*
+there — otherwise the model would learn to hallucinate directions.
+
+A densification step grows the target's local structure so **|MB| is controllable up to the cap of 25**.

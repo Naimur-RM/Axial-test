@@ -1,0 +1,8 @@
+{
+  "tier": "A",
+  "steps_done": 6000,
+  "best_val_f1": 0.6922,
+  "device": "cuda",
+  "best": "output\\axialmb_v2\\checkpoints\\best.pt",
+  "last": "output\\axialmb_v2\\checkpoints\\last.pt"
+}

@@ -1,0 +1,484 @@
+{
+  "task": "causal_discovery_boundary",
+  "what_is_measured": "Moral-graph neighborhood of each target (parents, children, spouses). Orientation accuracy is not computed.",
+  "alpha": 0.05,
+  "fdr_axial": 0.1,
+  "synthetic_summary": {
+    "pc": {
+      "n": 6,
+      "child_recall": 1.0,
+      "child_recall_n": 5,
+      "f1": 0.7559523809523809,
+      "f1_n": 6,
+      "fdr": 0.1111111111111111,
+      "fdr_n": 6,
+      "n_children": 1.3333333333333333,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 3.1666666666666665,
+      "n_pred_n": 6,
+      "n_spouses": 2.0,
+      "n_spouses_n": 6,
+      "n_truth": 4.333333333333333,
+      "n_truth_n": 6,
+      "parent_recall": 0.8,
+      "parent_recall_n": 2,
+      "precision": 0.8888888888888888,
+      "precision_n": 6,
+      "recall": 0.6666666666666666,
+      "recall_n": 6,
+      "spouse_recall": 0.4333333333333333,
+      "spouse_recall_n": 5,
+      "tp": 2.8333333333333335,
+      "tp_n": 6
+    },
+    "ges": {
+      "n": 6,
+      "child_recall": 1.0,
+      "child_recall_n": 5,
+      "f1": 0.8334628334628335,
+      "f1_n": 6,
+      "fdr": 0.25985449735449734,
+      "fdr_n": 6,
+      "n_children": 1.3333333333333333,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 6.333333333333333,
+      "n_pred_n": 6,
+      "n_spouses": 2.0,
+      "n_spouses_n": 6,
+      "n_truth": 4.333333333333333,
+      "n_truth_n": 6,
+      "parent_recall": 1.0,
+      "parent_recall_n": 2,
+      "precision": 0.7401455026455026,
+      "precision_n": 6,
+      "recall": 1.0,
+      "recall_n": 6,
+      "spouse_recall": 1.0,
+      "spouse_recall_n": 5,
+      "tp": 4.333333333333333,
+      "tp_n": 6
+    },
+    "avici": {
+      "n": 6,
+      "child_recall": 1.0,
+      "child_recall_n": 5,
+      "f1": 0.7674603174603174,
+      "f1_n": 6,
+      "fdr": 0.2953463203463203,
+      "fdr_n": 6,
+      "n_children": 1.3333333333333333,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 6.666666666666667,
+      "n_pred_n": 6,
+      "n_spouses": 2.0,
+      "n_spouses_n": 6,
+      "n_truth": 4.333333333333333,
+      "n_truth_n": 6,
+      "parent_recall": 0.8,
+      "parent_recall_n": 2,
+      "precision": 0.7046536796536796,
+      "precision_n": 6,
+      "recall": 0.9333333333333332,
+      "recall_n": 6,
+      "spouse_recall": 1.0,
+      "spouse_recall_n": 5,
+      "tp": 4.0,
+      "tp_n": 6
+    },
+    "axialmb": {
+      "n": 6,
+      "child_recall": 1.0,
+      "child_recall_n": 5,
+      "f1": 0.9629629629629631,
+      "f1_n": 6,
+      "fdr": 0.03333333333333333,
+      "fdr_n": 6,
+      "n_children": 1.3333333333333333,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 4.333333333333333,
+      "n_pred_n": 6,
+      "n_spouses": 2.0,
+      "n_spouses_n": 6,
+      "n_truth": 4.333333333333333,
+      "n_truth_n": 6,
+      "parent_recall": 1.0,
+      "parent_recall_n": 2,
+      "precision": 0.9666666666666667,
+      "precision_n": 6,
+      "recall": 0.9666666666666667,
+      "recall_n": 6,
+      "spouse_recall": 0.9333333333333333,
+      "spouse_recall_n": 5,
+      "tp": 4.166666666666667,
+      "tp_n": 6
+    }
+  },
+  "benchmark": "asia",
+  "benchmark_summary": {
+    "pc": {
+      "n": 8,
+      "child_recall": 0.6666666666666666,
+      "child_recall_n": 6,
+      "f1": 0.5702380952380952,
+      "f1_n": 8,
+      "fdr": 0.07291666666666666,
+      "fdr_n": 8,
+      "n_children": 1.0,
+      "n_children_n": 8,
+      "n_parents": 1.0,
+      "n_parents_n": 8,
+      "n_pred": 1.75,
+      "n_pred_n": 8,
+      "n_spouses": 0.5,
+      "n_spouses_n": 8,
+      "n_truth": 2.5,
+      "n_truth_n": 8,
+      "parent_recall": 0.5833333333333334,
+      "parent_recall_n": 6,
+      "precision": 0.9270833333333333,
+      "precision_n": 8,
+      "recall": 0.5291666666666667,
+      "recall_n": 8,
+      "spouse_recall": 0.5,
+      "spouse_recall_n": 4,
+      "tp": 1.5,
+      "tp_n": 8
+    },
+    "ges": {
+      "n": 8,
+      "child_recall": 0.8333333333333334,
+      "child_recall_n": 6,
+      "f1": 0.85,
+      "f1_n": 8,
+      "fdr": 0.0,
+      "fdr_n": 8,
+      "n_children": 1.0,
+      "n_children_n": 8,
+      "n_parents": 1.0,
+      "n_parents_n": 8,
+      "n_pred": 2.25,
+      "n_pred_n": 8,
+      "n_spouses": 0.5,
+      "n_spouses_n": 8,
+      "n_truth": 2.5,
+      "n_truth_n": 8,
+      "parent_recall": 0.8333333333333334,
+      "parent_recall_n": 6,
+      "precision": 1.0,
+      "precision_n": 8,
+      "recall": 0.8333333333333333,
+      "recall_n": 8,
+      "spouse_recall": 1.0,
+      "spouse_recall_n": 4,
+      "tp": 2.25,
+      "tp_n": 8
+    },
+    "avici": {
+      "n": 8,
+      "child_recall": 0.3333333333333333,
+      "child_recall_n": 6,
+      "f1": 0.175,
+      "f1_n": 8,
+      "fdr": 0.22916666666666666,
+      "fdr_n": 8,
+      "n_children": 1.0,
+      "n_children_n": 8,
+      "n_parents": 1.0,
+      "n_parents_n": 8,
+      "n_pred": 1.0,
+      "n_pred_n": 8,
+      "n_spouses": 0.5,
+      "n_spouses_n": 8,
+      "n_truth": 2.5,
+      "n_truth_n": 8,
+      "parent_recall": 0.16666666666666666,
+      "parent_recall_n": 6,
+      "precision": 0.7708333333333333,
+      "precision_n": 8,
+      "recall": 0.13333333333333333,
+      "recall_n": 8,
+      "spouse_recall": 0.0,
+      "spouse_recall_n": 4,
+      "tp": 0.5,
+      "tp_n": 8
+    },
+    "axialmb": {
+      "n": 8,
+      "child_recall": 0.6666666666666666,
+      "child_recall_n": 6,
+      "f1": 0.7297619047619048,
+      "f1_n": 8,
+      "fdr": 0.1875,
+      "fdr_n": 8,
+      "n_children": 1.0,
+      "n_children_n": 8,
+      "n_parents": 1.0,
+      "n_parents_n": 8,
+      "n_pred": 2.0,
+      "n_pred_n": 8,
+      "n_spouses": 0.5,
+      "n_spouses_n": 8,
+      "n_truth": 2.5,
+      "n_truth_n": 8,
+      "parent_recall": 0.6666666666666666,
+      "parent_recall_n": 6,
+      "precision": 0.8125,
+      "precision_n": 8,
+      "recall": 0.7166666666666666,
+      "recall_n": 8,
+      "spouse_recall": 0.75,
+      "spouse_recall_n": 4,
+      "tp": 1.75,
+      "tp_n": 8
+    }
+  },
+  "notes": {
+    "pc": {
+      "algorithm": "PC",
+      "indep_test": "fisherz",
+      "alpha": 0.05,
+      "max_cond_requested": 3,
+      "status": "ok"
+    },
+    "ges": {
+      "algorithm": "GES",
+      "score": "bic-g",
+      "status": "ok"
+    },
+    "avici": {
+      "algorithm": "AVICI",
+      "threshold": 0.5,
+      "mean_edge_prob": 0.10623639076948166,
+      "status": "ok"
+    },
+    "asia_pc": {
+      "algorithm": "PC",
+      "indep_test": "chisq",
+      "alpha": 0.05,
+      "max_cond_requested": 3,
+      "status": "ok"
+    },
+    "asia_ges": {
+      "algorithm": "GES",
+      "score": "bic-d",
+      "status": "ok"
+    },
+    "asia_avici": {
+      "algorithm": "AVICI",
+      "threshold": 0.5,
+      "mean_edge_prob": 0.07474347949028015,
+      "status": "ok"
+    }
+  },
+  "worlds": [
+    {
+      "world": 0,
+      "family": "collider_hub",
+      "mech": "heteroscedastic",
+      "pc": [
+        6,
+        10,
+        11
+      ],
+      "ges": [
+        2,
+        3,
+        6,
+        9,
+        11
+      ],
+      "avici": [
+        2,
+        3,
+        6,
+        11
+      ],
+      "axialmb": [
+        1,
+        2,
+        5,
+        10
+      ]
+    },
+    {
+      "world": 1,
+      "family": "collider_hub",
+      "mech": "poly",
+      "pc": [
+        2,
+        5,
+        7,
+        10
+      ],
+      "ges": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10
+      ],
+      "avici": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11
+      ],
+      "axialmb": [
+        1,
+        4,
+        6,
+        7,
+        9
+      ]
+    },
+    {
+      "world": 2,
+      "family": "collider_hub",
+      "mech": "multiplicative",
+      "pc": [
+        1,
+        4,
+        5
+      ],
+      "ges": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        11
+      ],
+      "avici": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "axialmb": [
+        0,
+        1,
+        3,
+        4
+      ]
+    },
+    {
+      "world": 3,
+      "family": "collider_hub",
+      "mech": "heavy_tail",
+      "pc": [
+        4,
+        6,
+        8
+      ],
+      "ges": [
+        4,
+        5,
+        6,
+        8
+      ],
+      "avici": [
+        4,
+        5,
+        6,
+        8
+      ],
+      "axialmb": [
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "world": 4,
+      "family": "collider_hub",
+      "mech": "sigmoid",
+      "pc": [
+        1,
+        3,
+        9
+      ],
+      "ges": [
+        1,
+        2,
+        3,
+        6,
+        9
+      ],
+      "avici": [
+        2,
+        3,
+        7,
+        9
+      ],
+      "axialmb": [
+        0,
+        1,
+        2,
+        5,
+        8
+      ]
+    },
+    {
+      "world": 5,
+      "family": "collider_hub",
+      "mech": "sigmoid",
+      "pc": [
+        1,
+        5,
+        11
+      ],
+      "ges": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        10,
+        11
+      ],
+      "avici": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8
+      ],
+      "axialmb": [
+        0,
+        1,
+        2,
+        4
+      ]
+    }
+  ]
+}

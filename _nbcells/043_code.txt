@@ -1,0 +1,10 @@
+names = [t.strip() for t, _ in TS_SETTINGS]
+x = np.arange(len(names)); w = 0.27
+fig, ax = plt.subplots(figsize=(9, 4))
+ax.bar(x - w, [ts[n]['precision'] for n in names], w, label='precision', color='#534AB7')
+ax.bar(x,     [ts[n]['recall']    for n in names], w, label='recall',    color='#1D9E75')
+ax.bar(x + w, [ts[n]['fdr']       for n in names], w, label='empirical FDR', color='#888')
+ax.axhline(CFG['alpha'], ls='--', color='#D85A30', label='nominal FDR')
+ax.set_xticks(x); ax.set_xticklabels(names, rotation=12, fontsize=8); ax.set_ylim(0, 1.05)
+ax.set_title('Zero-shot time series: lagged parent-set recovery'); ax.legend(fontsize=8)
+savefig(fig, '07_timeseries.png'); plt.show()

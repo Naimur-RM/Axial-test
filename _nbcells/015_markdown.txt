@@ -1,0 +1,6 @@
+## 6 - The axial transformer
+
+One block = **attention across features** (within a sample) then **attention across samples**
+(within a feature). That is how every cell of the matrix participates — no summary statistics.
+
+Deliberately **no positional encoding on either axis**, which gives the two properties we test below.

@@ -1,0 +1,16 @@
+# Budgeted + resumable. Re-running this cell CONTINUES from the saved checkpoint.
+CKPT = os.path.join(CKPT_DIR, 'axial_mb_train.pt')
+hist = train(model, CFG, device=DEVICE, log_every=CFG['log_every'], seed=SEED,
+             families=TRAIN_FAMILIES, ckpt_path=CKPT,
+             max_minutes=CFG['max_minutes'], ckpt_every=CFG['ckpt_every'])
+torch.save(model.state_dict(), os.path.join(CKPT_DIR, 'axial_mb.pt'))
+save_json(hist, 'train_history.json')
+last_step, last_auc = hist[-1]['step'], hist[-1]['train_auc']
+print(f'\nreached step {last_step}/{CFG["steps"]} | AUC {last_auc:.3f}')
+if last_step < CFG['steps']:
+    print('NOTE: stopped on the time budget. The rest of the notebook will run with this '
+          'partially-trained model; re-run the cell above to train further.')
+if last_auc <= 0.7:
+    print('WARNING: AUC <= 0.7 -- undertrained. Give it more minutes before trusting results.')
+else:
+    print('[VALIDATION] training converged, AUC %.3f -> PASS' % last_auc)

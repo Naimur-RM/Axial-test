@@ -1,0 +1,7 @@
+## 13 - Ablation: conditioning strategy (power vs validity)
+The verifier can condition each candidate on the **whole shortlist** (safe) or on a **small,
+role-aware set** chosen from the transformer's type/orientation heads (more powerful at large `|MB|`).
+
+**What we expect:** role-aware buys recall but small conditioning sets may fail to block every
+path, so empirical FDR rises above nominal. Full-shortlist conditioning is the validity-first
+default used everywhere above.

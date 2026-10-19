@@ -1,0 +1,48 @@
+# pgmpy ships the bnlearn benchmark networks (asia, survey, sachs, child, ...) offline
+try:
+    import pgmpy
+except ImportError:
+    import subprocess, sys
+    subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'pgmpy'], check=False)
+
+import numpy as np, torch, torch.nn as nn, time, math
+import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
+from sklearn.covariance import LedoitWolf
+from sklearn.linear_model import LogisticRegression
+
+SEED = 7
+np.random.seed(SEED); torch.manual_seed(SEED)
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+print('torch', torch.__version__, '| device:', DEVICE)
+if DEVICE == 'cuda': print('GPU:', torch.cuda.get_device_name(0))
+else: print('WARNING: no GPU -> training will be slow. Runtime > Change runtime type > GPU')
+
+def save_json(o, n):
+    p = os.path.join(TAB_DIR, n)
+    with open(p, 'w') as f: json.dump(o, f, indent=2, default=float)
+    print('saved ->', p)
+def savefig(fig, n):
+    p = os.path.join(FIG_DIR, n); fig.savefig(p, dpi=150, bbox_inches='tight'); print('saved ->', p)
+
+# ---- PROJECT SCOPE CAPS ----------------------------------------------------
+# This build is deliberately scoped to small/medium problems, which is where the
+# real causal benchmarks (asia, survey, sachs, child, ...) live.
+MAX_FEATURES = 50     # never more than 50 features
+MAX_MB       = 25     # never a blanket larger than 25
+
+# ---- memory planning helpers (used by the config cell below) ----------------
+# The axial model holds a (B, N, p+1, d) tensor; each block saves ~k copies of it
+# for the backward pass, UNLESS gradient checkpointing is on -- then only
+# (blocks + k) copies ever exist at once. That is the whole fix for Tier-B OOM.
+def estimate_memory_gb(B, N, p, d, blocks, bf16=True, grad_checkpoint=True, k=6):
+    cell = B * N * (p + 1) * d * (2 if bf16 else 4) / 1e9
+    return (blocks + k) * cell if grad_checkpoint else blocks * k * cell
+
+# Largest micro-batch fitting the budget + accumulation steps to keep effective batch.
+def autoconfig(budget_gb, d, blocks, p, N, bf16=True, grad_checkpoint=True, B_max=16):
+    for B in range(B_max, 0, -1):
+        if estimate_memory_gb(B, N, p, d, blocks, bf16, grad_checkpoint) <= budget_gb:
+            return B, max(1, B_max // B)
+    return 1, B_max
+
+print('[VALIDATION] imports ready -> PASS')

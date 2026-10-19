@@ -1,0 +1,18 @@
+def eval_mode(nw, role_aware, want=6, p=MAX_FEATURES, N=None, seed=900):
+    N = N or CFG['eval_N']
+    rng = np.random.default_rng(seed); rows = []
+    for _ in range(nw):
+        fam = TRAIN_FAMILIES[rng.integers(len(TRAIN_FAMILIES))]
+        w = generate_world(rng, p=p, N=N, family=fam, target_mb=want)
+        r = run_pipeline(model, w['X'], w['y'], fusion=fusion, alpha=CFG['alpha'],
+                         block=CFG['block'], role_aware=role_aware, device=DEVICE)
+        rows.append(score_set(r['blanket'], w['member']))
+    return {m: float(np.mean([x[m] for x in rows])) for m in rows[0]}
+
+abl = {'full shortlist (default)': eval_mode(10, False), 'role-aware (small sets)': eval_mode(10, True)}
+print('%-26s %8s %8s %8s' % ('conditioning', 'recall', 'prec', 'FDR'))
+for k_, v in abl.items():
+    print('%-26s %8.2f %8.2f %8.2f' % (k_, v['recall'], v['precision'], v['fdp']))
+print('\\nnominal FDR = %.2f  ->  default is validity-first' % CFG['alpha'])
+save_json(abl, 'ablation_conditioning.json')
+print('[VALIDATION] conditioning ablation complete -> PASS')

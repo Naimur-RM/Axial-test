@@ -1,0 +1,37 @@
+import numpy as np
+from sklearn.covariance import LedoitWolf
+
+STAT_NAMES = ['abs_marginal_corr','abs_partial_corr_hubs','collider_boost',
+              'max_corr_to_hubs','rank_marginal','abs_precision_row']
+
+def stat_features(X, y, n_hubs=4):
+    N, p = X.shape
+    Xs = (X - X.mean(0)) / (X.std(0) + 1e-8)
+    ys = (y - y.mean()) / (y.std() + 1e-8)
+    cy = (Xs.T @ ys) / N; ac = np.abs(cy)
+    hubs = np.argsort(-ac)[:min(n_hubs, p)]
+    F = np.zeros((p, 6), dtype=np.float32)
+    F[:, 0] = ac
+    H = Xs[:, hubs]
+    ry = ys - H @ np.linalg.lstsq(H, ys, rcond=None)[0]
+    RX = Xs - H @ np.linalg.lstsq(H, Xs, rcond=None)[0]
+    F[:, 1] = np.abs((RX.T @ ry) / (np.linalg.norm(RX, axis=0) * np.linalg.norm(ry) + 1e-12))
+    boost = np.full(p, -np.inf)
+    for hi in hubs:                      # spouse fingerprint: dependence that APPEARS
+        h = Xs[:, hi]                    # once you condition on a hub (a likely child)
+        RXh = Xs - np.outer(h, (h @ Xs) / (h @ h + 1e-12))
+        ryh = ys - h * ((h @ ys) / (h @ h + 1e-12))
+        pc = np.abs((RXh.T @ ryh) / (np.linalg.norm(RXh, axis=0) * np.linalg.norm(ryh) + 1e-12))
+        boost = np.maximum(boost, pc - ac)
+    F[:, 2] = boost
+    C = np.abs((Xs.T @ Xs[:, hubs]) / N)
+    for i, hi in enumerate(hubs): C[hi, i] = 0.0
+    F[:, 3] = C.max(1)
+    F[:, 4] = np.argsort(np.argsort(ac)) / max(p - 1, 1)
+    try:                                 # precision-matrix row: MB under Gaussianity
+        D = np.column_stack([ys, Xs])
+        P = LedoitWolf(assume_centered=True).fit(D).precision_
+        r = np.abs(P[0, 1:]); F[:, 5] = r / (r.max() + 1e-12)
+    except Exception:
+        F[:, 5] = ac
+    return np.nan_to_num(F, nan=0.0, posinf=0.0, neginf=0.0)

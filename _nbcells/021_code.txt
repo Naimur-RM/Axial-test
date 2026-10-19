@@ -1,0 +1,19 @@
+TRAIN_FAMILIES = [f for f in FAMILIES if f != HOLDOUT_FAMILY]
+print('training families (%d):' % len(TRAIN_FAMILIES), TRAIN_FAMILIES)
+print('held out for OOD test:', HOLDOUT_FAMILY)
+
+model = AxialMB(d=CFG['d'], heads=CFG['heads'], blocks=CFG['blocks'], n_stats=6,
+                dropout=CFG['dropout'], grad_checkpoint=CFG['grad_checkpoint']).to(DEVICE)
+print('parameters: {:,}'.format(sum(q.numel() for q in model.parameters())))
+
+# ---- SPEED PROBE: measure 3 real steps BEFORE committing to the long run ----
+sec = probe_speed(model, CFG, device=DEVICE, families=TRAIN_FAMILIES, n_steps=3)
+full_h = sec * CFG['steps'] / 3600
+fits = int(CFG['max_minutes'] * 60 / max(sec, 1e-6))
+print(f'\nmeasured speed : {sec:.2f} s/step')
+print(f'full run       : {CFG["steps"]} steps = {full_h:.1f} h')
+print(f'time budget    : {CFG["max_minutes"]} min -> about {fits} steps this session')
+if full_h > CFG['max_minutes'] / 60:
+    print('  -> the budget will stop training early and SAVE. Re-run this cell to continue.')
+    print('  -> to finish faster: lower CFG["steps"], CFG["d"], CFG["blocks"] or CFG["N_max"].')
+save_json(dict(sec_per_step=sec, projected_hours=full_h, steps_in_budget=fits), 'speed_probe.json')

@@ -1,0 +1,7 @@
+{
+  "checkpoint": "axialmb_runs\\checkpoints\\axial_mb.pt",
+  "tier": "smoke",
+  "steps_logged": 12,
+  "final_train_auc": 0.6153846153846154,
+  "device": "cuda"
+}

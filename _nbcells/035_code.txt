@@ -1,0 +1,17 @@
+N_GRID = [100, 200, 400, CFG['eval_N']]
+rec_curve = {}
+for Nv in N_GRID:
+    rec_curve[Nv] = evaluate(5, TRAIN_FAMILIES, MAX_FEATURES, Nv, 6, SEED + 60 + Nv)
+    r = rec_curve[Nv]
+    print('N=%5d -> recall %.2f | precision %.2f | FDR %.2f' % (Nv, r['recall'], r['precision'], r['fdp']))
+save_json(rec_curve, 'recall_vs_N.json')
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.plot(N_GRID, [rec_curve[n]['recall'] for n in N_GRID], 'o-', color='#1D9E75', label='recall')
+ax.plot(N_GRID, [rec_curve[n]['precision'] for n in N_GRID], 's-', color='#534AB7', label='precision')
+ax.plot(N_GRID, [rec_curve[n]['fdp'] for n in N_GRID], '^--', color='#888', label='empirical FDR')
+ax.axhline(CFG['alpha'], ls=':', color='#D85A30', label='nominal FDR')
+ax.set_xscale('log'); ax.set_xlabel('N (samples)'); ax.set_ylim(0, 1.05)
+ax.set_title('Recall is sample-size bound; precision and FDR are stable'); ax.legend(fontsize=8)
+savefig(fig, '05_recall_vs_N.png'); plt.show()
+print('[VALIDATION] recall-vs-N diagnostic complete -> PASS')

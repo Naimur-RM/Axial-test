@@ -1,0 +1,190 @@
+{
+  "task": "timeseries_vs_pcmci_pc1",
+  "what_is_measured": "Lagged parent set. PC1 is the parent-screening stage of PCMCI, before the MCI contemporaneous tests. No orientation is scored.",
+  "synthetic": {
+    "linear": {
+      "pc1": {
+        "precision": 0.8888888888888888,
+        "recall": 1.0,
+        "f1": 0.9333333333333332,
+        "fdr": 0.1111111111111111,
+        "tp": 2.3333333333333335,
+        "n_pred": 2.6666666666666665,
+        "n_truth": 2.3333333333333335,
+        "n": 1
+      },
+      "axialmb": {
+        "precision": 1.0,
+        "recall": 0.8333333333333334,
+        "f1": 0.8888888888888888,
+        "fdr": 0.0,
+        "tp": 2.0,
+        "n_pred": 2.0,
+        "n_truth": 2.3333333333333335,
+        "n": 1
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": -0.0444444444444444,
+        "recall_ours_minus_pc1": -0.16666666666666663,
+        "precision_ours_minus_pc1": 0.11111111111111116
+      },
+      "pc1_info": {
+        "implementation": "fisherz_pc1",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 4,
+        "lag": 2,
+        "n": 500,
+        "nonlinear": false,
+        "density": 0.25
+      }
+    },
+    "nonlinear": {
+      "pc1": {
+        "precision": 0.8888888888888888,
+        "recall": 0.8333333333333334,
+        "f1": 0.8222222222222223,
+        "fdr": 0.1111111111111111,
+        "tp": 2.0,
+        "n_pred": 2.3333333333333335,
+        "n_truth": 2.3333333333333335,
+        "n": 1
+      },
+      "axialmb": {
+        "precision": 1.0,
+        "recall": 0.4444444444444444,
+        "f1": 0.611111111111111,
+        "fdr": 0.0,
+        "tp": 1.0,
+        "n_pred": 1.0,
+        "n_truth": 2.3333333333333335,
+        "n": 1
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": -0.21111111111111125,
+        "recall_ours_minus_pc1": -0.38888888888888895,
+        "precision_ours_minus_pc1": 0.11111111111111116
+      },
+      "pc1_info": {
+        "implementation": "fisherz_pc1",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 4,
+        "lag": 2,
+        "n": 500,
+        "nonlinear": true,
+        "density": 0.25
+      }
+    }
+  },
+  "gas_furnace": {
+    "note": "Box-Jenkins Series J. Scored claims: CO2 depends on gas rate at lags 3, 4 and 5, and past CO2 is not a parent of the gas input.",
+    "pc1": {
+      "input_delay_recall": 0.3333333333333333,
+      "input_delay_hits": [
+        [
+          0,
+          3
+        ]
+      ],
+      "exogeneity_violations": [],
+      "n_exogeneity_violations": 0,
+      "parents_of_gas": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parents_of_co2": [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "pc1_info": {
+      "implementation": "fisherz_pc1",
+      "alpha": 0.05,
+      "tau_max": 5
+    },
+    "axialmb": {
+      "input_delay_recall": 1.0,
+      "input_delay_hits": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ]
+      ],
+      "exogeneity_violations": [],
+      "n_exogeneity_violations": 0,
+      "parents_of_gas": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parents_of_co2": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "where_axial_helps": {
+      "input_delay_recall_ours_minus_pc1": 0.6666666666666667,
+      "exogeneity_violations_ours_minus_pc1": 0
+    }
+  }
+}

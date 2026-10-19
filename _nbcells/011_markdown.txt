@@ -1,0 +1,4 @@
+## 5 - Statistical operator (the parallel, lightweight path)
+Six cheap scores per feature. The **precision-matrix row** is theoretically grounded: under
+Gaussianity the non-zeros of the target's precision row *are* the Markov blanket. The
+**collider boost** is the spouse fingerprint.

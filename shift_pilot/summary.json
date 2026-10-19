@@ -1,0 +1,110 @@
+{
+ "n=300 descendant (count=359)": {
+  "marginal": 0.618,
+  "full": 0.237,
+  "oracle_pa": 0.097,
+  "max3": 0.031,
+  "greedy": 0.028,
+  "proposer_good": 0.025,
+  "proposer_bad": 0.075
+ },
+ "n=300 other (count=641)": {
+  "marginal": 0.051,
+  "full": 0.332,
+  "oracle_pa": 0.067,
+  "max3": 0.014,
+  "greedy": 0.002,
+  "proposer_good": 0.014,
+  "proposer_bad": 0.017
+ },
+ "n=300 target (count=200)": {
+  "marginal": 0.895,
+  "full": 0.885,
+  "oracle_pa": 1.0,
+  "max3": 0.79,
+  "greedy": 0.695,
+  "proposer_good": 0.86,
+  "proposer_bad": 0.82
+ },
+ "n=1000 descendant (count=401)": {
+  "marginal": 0.748,
+  "full": 0.16,
+  "oracle_pa": 0.115,
+  "max3": 0.037,
+  "greedy": 0.052,
+  "proposer_good": 0.045,
+  "proposer_bad": 0.112
+ },
+ "n=1000 other (count=599)": {
+  "marginal": 0.04,
+  "full": 0.244,
+  "oracle_pa": 0.047,
+  "max3": 0.008,
+  "greedy": 0.003,
+  "proposer_good": 0.017,
+  "proposer_bad": 0.012
+ },
+ "n=1000 target (count=200)": {
+  "marginal": 0.975,
+  "full": 0.96,
+  "oracle_pa": 0.99,
+  "max3": 0.935,
+  "greedy": 0.86,
+  "proposer_good": 0.965,
+  "proposer_bad": 0.945
+ },
+ "n=300 target/func (count=29)": {
+  "marginal": 0.345,
+  "full": 0.931,
+  "oracle_pa": 1.0,
+  "max3": 0.345,
+  "greedy": 0.172,
+  "proposer_good": 0.345,
+  "proposer_bad": 0.345
+ },
+ "n=300 target/mean (count=90)": {
+  "marginal": 0.989,
+  "full": 0.967,
+  "oracle_pa": 1.0,
+  "max3": 0.956,
+  "greedy": 0.933,
+  "proposer_good": 0.989,
+  "proposer_bad": 0.989
+ },
+ "n=300 target/scale (count=81)": {
+  "marginal": 0.988,
+  "full": 0.778,
+  "oracle_pa": 1.0,
+  "max3": 0.765,
+  "greedy": 0.617,
+  "proposer_good": 0.901,
+  "proposer_bad": 0.802
+ },
+ "n=1000 target/func (count=23)": {
+  "marginal": 0.783,
+  "full": 0.957,
+  "oracle_pa": 0.913,
+  "max3": 0.739,
+  "greedy": 0.609,
+  "proposer_good": 0.739,
+  "proposer_bad": 0.739
+ },
+ "n=1000 target/mean (count=104)": {
+  "marginal": 1.0,
+  "full": 0.99,
+  "oracle_pa": 1.0,
+  "max3": 0.99,
+  "greedy": 0.971,
+  "proposer_good": 1.0,
+  "proposer_bad": 1.0
+ },
+ "n=1000 target/scale (count=73)": {
+  "marginal": 1.0,
+  "full": 0.918,
+  "oracle_pa": 1.0,
+  "max3": 0.918,
+  "greedy": 0.781,
+  "proposer_good": 0.986,
+  "proposer_bad": 0.932
+ }
+}

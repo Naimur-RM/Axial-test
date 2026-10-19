@@ -1,0 +1,17 @@
+## 12b - Zero-shot transfer: time series (lagged PARENT set)
+The model was trained **only on i.i.d. SCMs** -- never on time series. This section tests whether it
+transfers with no retraining.
+
+**Why only parents.** Every candidate here is a *past* value, and the past cannot be an effect of the
+present. So the lagged candidate set contains **parents only** -- no children, no spouses -- which
+makes the parent set the correct and complete target, with no orientation step needed.
+
+**Design.** To explain `X_i(t)` we offer every `X_j(t-l)` for `j = 1..d`, `l = 1..L`, giving `d*L`
+candidates (kept under the 50 cap). Ground truth is the generating VAR's lagged parent set.
+
+**What we expect:** near-perfect recovery on sparse systems; degradation as the system gets dense.
+**Honest caveat measured below:** in a *dense* VAR with a truncated lag window, the recovered set is
+the true conditional-dependence set, which is strictly LARGER than the parent set (paths through
+lags beyond `L` are not blocked). Precision scored against parents is then pessimistic by
+construction -- with full conditioning we measured recall 0.97 but precision 0.63 at `d=10, L=3,
+density 0.25`. So we default to sparse settings where the target is well posed.

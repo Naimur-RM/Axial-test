@@ -1,0 +1,191 @@
+import numpy as np
+
+FAMILIES = ['erdos_renyi','scale_free','small_world','modular','layered',
+            'tree','lattice','collider_hub','latent_confounder']
+MECHANISMS = ['linear_gaussian','linear_nongauss','mlp','poly','sigmoid',
+              'threshold','multiplicative','heteroscedastic','heavy_tail']
+# parent-vs-child orientation is NOT identifiable from observational linear-Gaussian data
+IDENTIFIABLE = {m: (m != 'linear_gaussian') for m in MECHANISMS}
+
+
+def _parents_by_family(p, family, rng):
+    """Return list-of-parent-lists over a topological order 0..p-1 (edges i->j, i<j)."""
+    pa = [[] for _ in range(p)]
+    if family == 'erdos_renyi':
+        rho = rng.uniform(0.02, 0.08)
+        for j in range(1, p):
+            cand = np.arange(j)
+            sel = cand[rng.random(j) < rho]
+            pa[j] = list(sel[-6:])
+    elif family == 'scale_free':
+        m = rng.integers(1, 4)
+        outdeg = np.ones(p)
+        for j in range(1, p):
+            k = min(int(m), j)
+            w = outdeg[:j] / outdeg[:j].sum()
+            pa[j] = list(rng.choice(j, size=k, replace=False, p=w))
+            outdeg[pa[j]] += 1
+    elif family == 'small_world':
+        k = int(rng.integers(1, 4))
+        for j in range(1, p):
+            base = [i for i in range(max(0, j-k), j)]
+            if rng.random() < 0.15 and j > 4:
+                base = base[:-1] + [int(rng.integers(0, j))]
+            pa[j] = list(dict.fromkeys(base))
+    elif family == 'modular':
+        nb = int(rng.integers(3, 7)); blk = rng.integers(0, nb, p)
+        for j in range(1, p):
+            for i in range(j):
+                pr = 0.25 if blk[i] == blk[j] else 0.01
+                if rng.random() < pr: pa[j].append(i)
+            pa[j] = pa[j][-6:]
+    elif family == 'layered':
+        nl = int(rng.integers(3, 6)); lay = np.sort(rng.integers(0, nl, p))
+        for j in range(p):
+            prev = np.where(lay == lay[j]-1)[0]
+            if len(prev):
+                k = min(int(rng.integers(1, 4)), len(prev))
+                pa[j] = list(rng.choice(prev, size=k, replace=False))
+    elif family == 'tree':
+        for j in range(1, p): pa[j] = [int(rng.integers(0, j))]
+    elif family == 'lattice':
+        side = int(np.ceil(np.sqrt(p)))
+        for j in range(p):
+            r, c = divmod(j, side)
+            for i in ([j-1] if c > 0 else []) + ([j-side] if r > 0 else []):
+                if 0 <= i < j: pa[j].append(i)
+    elif family == 'collider_hub':
+        hubs = set(rng.choice(np.arange(p//3, p), size=max(2, p//12), replace=False).tolist())
+        for j in range(1, p):
+            if j in hubs:
+                k = min(int(rng.integers(3, 7)), j)
+                pa[j] = list(rng.choice(j, size=k, replace=False))
+            elif j > 0 and rng.random() < 0.3:
+                pa[j] = [int(rng.integers(0, j))]
+    elif family == 'latent_confounder':
+        rho = rng.uniform(0.03, 0.08)
+        for j in range(1, p):
+            cand = np.arange(j); sel = cand[rng.random(j) < rho]
+            pa[j] = list(sel[-5:])
+    return pa
+
+
+def _mb_and_roles(pa, t, p):
+    ch = [j for j in range(p) if t in pa[j]]
+    parents = list(pa[t])
+    spouses = []
+    for c in ch:
+        for k in pa[c]:
+            if k != t and k not in parents and k not in ch: spouses.append(k)
+    spouses = sorted(set(spouses))
+    return parents, ch, spouses
+
+
+def _apply_mech(vals, mech, rng, noise_s):
+    """vals: (N,k) parent values -> (N,) node values."""
+    N, k = vals.shape
+    def nz(scale=1.0):
+        if mech == 'linear_nongauss':
+            return rng.laplace(0, scale, N) if rng.random() < .5 else rng.uniform(-1.7*scale, 1.7*scale, N)
+        if mech == 'heavy_tail': return rng.standard_t(3, N) * scale * 0.6
+        return rng.normal(0, scale, N)
+    if k == 0: return nz(1.0)
+    w = rng.uniform(.6, 1.5, k) * rng.choice([-1., 1.], k)
+    lin = vals @ w
+    if mech in ('linear_gaussian','linear_nongauss','heavy_tail'): out = lin
+    elif mech == 'mlp':
+        H = int(rng.integers(3, 7))
+        W1 = rng.normal(0, 1.2, (k, H)); W2 = rng.normal(0, 1.2, H)
+        out = np.tanh(vals @ W1) @ W2
+    elif mech == 'poly':
+        w2 = rng.uniform(.2, .7, k) * rng.choice([-1., 1.], k)
+        out = lin + (vals**2) @ w2
+    elif mech == 'sigmoid': out = 2.0 * np.tanh(lin)
+    elif mech == 'threshold': out = lin + 1.5 * np.sign(lin) * (np.abs(lin) > 0.8)
+    elif mech == 'multiplicative':
+        out = lin + (vals[:, 0] * vals[:, -1] if k > 1 else vals[:, 0]**2) * rng.uniform(.4, .9)
+    elif mech == 'heteroscedastic':
+        s = 0.4 + 0.8 * np.abs(np.tanh(lin))
+        return lin + rng.normal(0, 1, N) * s * noise_s
+    else: out = lin
+    return out + nz(noise_s)
+
+
+def _densify_to_target(pa, t, p, want, rng, max_tries=400):
+    """Grow the target's LOCAL structure (extra parents / children / co-parents)
+    until |MB| reaches `want`. Edges always go low-index -> high-index, so the
+    graph stays a DAG and the rest of the family structure is untouched."""
+    for _ in range(max_tries):
+        parents, children, spouses = _mb_and_roles(pa, t, p)
+        if len(parents) + len(children) + len(spouses) >= want: break
+        roll = rng.random()
+        if roll < 0.34 and t > 0:                      # add a parent of t
+            cand = [i for i in range(t) if i not in pa[t]]
+            if cand: pa[t].append(int(rng.choice(cand)))
+        elif roll < 0.67 and t < p-1:                  # add a child of t
+            cand = [j for j in range(t+1, p) if t not in pa[j]]
+            if cand: pa[int(rng.choice(cand))].append(t)
+        else:                                          # add a spouse via a child
+            if children:
+                c = int(rng.choice(children))
+                cand = [k for k in range(c) if k != t and k not in pa[c]]
+                if cand: pa[c].append(int(rng.choice(cand)))
+            elif t < p-1:
+                cand = [j for j in range(t+1, p) if t not in pa[j]]
+                if cand: pa[int(rng.choice(cand))].append(t)
+    return pa
+
+
+MAX_FEATURES = 50     # hard cap: this project targets p <= 50
+MAX_MB       = 25     # hard cap: this project targets |MB| <= 25
+
+def generate_world(rng, p=64, N=128, family=None, mech=None, target_mb=None):
+    """Returns dict with X (N,p-1), y (N,), per-column labels, and metadata."""
+    if p > MAX_FEATURES:
+        raise ValueError(f'p={p} exceeds MAX_FEATURES={MAX_FEATURES}')
+    family = family or FAMILIES[rng.integers(len(FAMILIES))]
+    mech   = mech   or MECHANISMS[rng.integers(len(MECHANISMS))]
+    p_gen = p + (rng.integers(5, 15) if family == 'latent_confounder' else 0)
+    pa = _parents_by_family(p_gen, family, rng)
+
+    # choose a target whose |MB| is closest to the requested size
+    sizes = []
+    for t in range(p_gen):
+        par, ch, sp = _mb_and_roles(pa, t, p_gen)
+        sizes.append((len(par)+len(ch)+len(sp), t))
+    want = target_mb if target_mb is not None else int(rng.integers(3, max(4, p//6)))
+    want = int(min(want, MAX_MB, max(2, p - 2)))        # enforce |MB| <= 25
+    sizes = [s for s in sizes if s[0] >= 2] or [(0, p_gen//2)]
+    t = min(sizes, key=lambda s: abs(s[0]-want))[1]
+    pa = _densify_to_target(pa, t, p_gen, want, rng)
+    parents, children, spouses = _mb_and_roles(pa, t, p_gen)
+
+    # simulate in topological order
+    noise_s = rng.uniform(0.6, 1.2)
+    data = np.zeros((N, p_gen))
+    for j in range(p_gen):
+        data[:, j] = _apply_mech(data[:, pa[j]] if pa[j] else np.zeros((N, 0)), mech, rng, noise_s)
+        sd = data[:, j].std()
+        if sd > 1e-8: data[:, j] /= sd
+
+    keep = [j for j in range(p_gen) if j != t]
+    if family == 'latent_confounder':      # hide some NON-blanket nodes
+        mb_set = set(parents+children+spouses)
+        hideable = [j for j in keep if j not in mb_set]
+        n_hide = min(p_gen - p, len(hideable))
+        hidden = set(rng.choice(hideable, size=n_hide, replace=False).tolist()) if n_hide > 0 else set()
+        keep = [j for j in keep if j not in hidden]
+    keep = keep[:p-1] if len(keep) >= p-1 else keep
+
+    X = data[:, keep]; y = data[:, t]
+    X = (X - X.mean(0)) / (X.std(0) + 1e-8); y = (y - y.mean()) / (y.std() + 1e-8)
+
+    pset, cset, sset = set(parents), set(children), set(spouses)
+    member = np.array([1 if (j in pset or j in cset or j in sset) else 0 for j in keep])
+    typ    = np.array([1 if (j in pset or j in cset) else (2 if j in sset else 0) for j in keep])
+    orient = np.array([0 if j in pset else (1 if j in cset else -1) for j in keep])
+    return dict(X=X.astype(np.float32), y=y.astype(np.float32),
+                member=member.astype(np.int64), type=typ.astype(np.int64),
+                orient=orient.astype(np.int64), family=family, mech=mech,
+                identifiable=bool(IDENTIFIABLE[mech]),
+                n_parents=len(parents), n_children=len(children), n_spouses=len(spouses))

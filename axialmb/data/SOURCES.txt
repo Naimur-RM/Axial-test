@@ -1,0 +1,10 @@
+gas_furnace.csv
+  Box and Jenkins (1970), Time Series Analysis, Series J.
+  296 observations of input gas rate and outlet CO2.
+  Mirrored from https://openmv.net/file/gas-furnace.csv
+
+sachs_cd3cd28_log.csv
+  Sachs et al. (2005), observational CD3/CD28 condition, log-transformed.
+  853 cells, 11 proteins. Consensus graph is the bnlearn / pgmpy "sachs" network.
+  Mirrored from
+  https://github.com/felixleopoldo/benchpress/blob/master/resources/data/mydatasets/2005_sachs_1_cd3cd28_log.csv

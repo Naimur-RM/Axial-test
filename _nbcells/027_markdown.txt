@@ -1,0 +1,7 @@
+## 9 - Verifier + e-BH certificate
+Each shortlisted candidate gets a betting account; wealth accumulates per sample using a
+**past-only (prequential)** nuisance, so the wealth is a valid supermartingale and we may stop early.
+**Role-aware conditioning sets** (from the transformer's type/orientation heads) keep the
+conditioning small, which is what preserves power at large `|MB|`.
+
+**What we expect:** a true member's wealth climbs past `1/alpha`; a noise feature's stays near or below 1.

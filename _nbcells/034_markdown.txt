@@ -1,0 +1,6 @@
+## 11b - Diagnostic: recall is driven by SAMPLE SIZE
+The transformer's ranking (AUC) is strong, but the final set is produced by the **verifier**, which
+only admits a feature once its betting wealth clears the e-BH bar. That needs samples.
+
+**What we expect:** recall climbs steeply with `N`, while precision and FDR stay flat. That shape is
+the signature of a *conservative* method: thin data costs recall, never validity.

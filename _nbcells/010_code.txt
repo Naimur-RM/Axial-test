@@ -1,0 +1,33 @@
+rng = np.random.default_rng(SEED)
+sizes = []
+for fam in FAMILIES:                      # test EVERY family explicitly
+    for _ in range(3):
+        w = generate_world(rng, p=MAX_FEATURES, N=256, family=fam)
+        assert w['X'].shape[1] <= MAX_FEATURES and w['member'].sum() <= MAX_MB + 3
+        sizes.append(int(w['member'].sum()))
+print('families generated:', len(FAMILIES), '->', FAMILIES)
+assert len(FAMILIES) == 9, 'expected 9 graph families'
+print('MB size: mean %.1f (min %d, max %d)' % (np.mean(sizes), min(sizes), max(sizes)))
+
+m_s, p_s = [], []
+for _ in range(60):
+    w = generate_world(rng, p=MAX_FEATURES, N=400, family='collider_hub', mech='linear_gaussian')
+    sp = np.where(w['type'] == 2)[0]; ch = np.where((w['type'] == 1) & (w['orient'] == 1))[0]
+    if not len(sp) or not len(ch): continue
+    s, c, X, y = sp[0], ch[0], w['X'], w['y']
+    m_s.append(abs(np.corrcoef(X[:, s], y)[0, 1]))
+    rx = X[:, s] - np.polyval(np.polyfit(X[:, c], X[:, s], 1), X[:, c])
+    ry = y - np.polyval(np.polyfit(X[:, c], y, 1), X[:, c])
+    p_s.append(abs(np.corrcoef(rx, ry)[0, 1]))
+print('spouse |marginal corr| = %.3f  ->  |partial corr given child| = %.3f' % (np.mean(m_s), np.mean(p_s)))
+assert np.mean(p_s) > np.mean(m_s) * 1.5, 'explaining-away signature missing'
+
+for want in [5, 15, MAX_MB]:
+    got = [generate_world(rng, p=MAX_FEATURES, N=256, target_mb=want)['member'].sum() for _ in range(10)]
+    print(f'  requested |MB|={want:3d} -> achieved {np.mean(got):5.1f}  (cap {MAX_MB})')
+assert np.mean([generate_world(rng, p=MAX_FEATURES, N=256, target_mb=MAX_MB)['member'].sum()
+                for _ in range(8)]) > 0.8 * MAX_MB, 'cannot reach |MB|=MAX_MB'
+try:
+    generate_world(rng, p=MAX_FEATURES + 10, N=128); raise AssertionError('cap not enforced')
+except ValueError: pass
+print(f'[VALIDATION] 9 families + spouse signature + |MB|={MAX_MB} reachable + p cap enforced -> PASS')

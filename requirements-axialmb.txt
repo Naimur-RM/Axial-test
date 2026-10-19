@@ -1,0 +1,16 @@
+numpy
+scipy
+scikit-learn
+torch
+pandas
+pgmpy
+causal-learn
+
+# PCMCI-PC1 (experiments/baselines/pcmci_pc1.py). A Fisher-z PC1 is the fallback.
+tigramite
+# Pretrained SCM graph model (experiments/baselines/causal.py). Needs jax.
+avici
+# StablePFN discovery head imports these when the checkpoint is loaded.
+timm
+einops
+kditransform

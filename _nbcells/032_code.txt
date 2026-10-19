@@ -1,0 +1,21 @@
+def evaluate(nw, families, p, N, want, seed):
+    rng = np.random.default_rng(seed); rows = []
+    for _ in range(nw):
+        fam = families[rng.integers(len(families))] if families else None
+        w = generate_world(rng, p=p, N=N, family=fam, target_mb=want)
+        r = run_pipeline(model, w['X'], w['y'], fusion=fusion, alpha=CFG['alpha'],
+                         block=CFG['block'], device=DEVICE)
+        s = score_set(r['blanket'], w['member'])
+        s['auc'] = auc(r['fused'], w['member']); rows.append(s)
+    k = rows[0].keys()
+    return {m: float(np.mean([r[m] for r in rows])) for m in k}
+
+EVAL_N = 12
+ind = evaluate(EVAL_N, TRAIN_FAMILIES, MAX_FEATURES, CFG['eval_N'], 8, SEED + 10)
+ood = evaluate(EVAL_N, [HOLDOUT_FAMILY], MAX_FEATURES, CFG['eval_N'], 8, SEED + 11)
+print('%-28s %8s %8s %8s %8s' % ('setting', 'AUC', 'prec', 'recall', 'FDR'))
+for nm, r in [('in-distribution', ind), (f'OOD: {HOLDOUT_FAMILY} (unseen)', ood)]:
+    print('%-28s %8.2f %8.2f %8.2f %8.2f' % (nm, r['auc'], r['precision'], r['recall'], r['fdp']))
+save_json(dict(in_distribution=ind, ood=ood), 'eval_ind_ood.json')
+print('\nNOTE: FDR is the empirical false-discovery rate; nominal target is %.2f' % CFG['alpha'])
+print('[VALIDATION] evaluation completed -> PASS')

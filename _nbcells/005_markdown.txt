@@ -1,0 +1,13 @@
+## 3 - Configuration + automatic memory planning
+Pick `TIER = 'A'` (fast proof of concept) or `TIER = 'B'` (research scale, `d=256`, 12 blocks).
+
+**Why this cell matters:** the axial model holds a `(B, N, p+1, d)` tensor and every block saves
+about six of them for the backward pass. Naive Tier B therefore needs **~77 GB** and OOMs on any
+single GPU. Two fixes make it fit:
+- **gradient checkpointing** - recompute each block in backward instead of storing it
+  (`blocks x 6` copies becomes `blocks + 6`), for ~30% extra compute and *bit-identical* gradients;
+- **bfloat16 autocast** - halves activation memory again.
+
+Together: **~77 GB -> ~10 GB**. The cell then auto-picks a micro-batch that fits your actual GPU and
+uses **gradient accumulation** to keep the effective batch size. Training also auto-halves the batch
+if it still hits OOM.

@@ -1,0 +1,17 @@
+import os, datetime, json
+
+try:
+    from google.colab import drive
+    drive.mount('/content/drive'); BASE='/content/drive/MyDrive'; ON_COLAB=True
+except Exception as e:
+    print('Not on Colab:', e); BASE=os.path.abspath('./axial_local'); ON_COLAB=False
+
+STAMP = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+RESULTS_DIR = os.path.join(BASE, 'AxialMB_results', f'run_{STAMP}')
+FIG_DIR = os.path.join(RESULTS_DIR, 'figures')
+TAB_DIR = os.path.join(RESULTS_DIR, 'tables')
+CKPT_DIR = os.path.join(RESULTS_DIR, 'checkpoints')
+for d in (RESULTS_DIR, FIG_DIR, TAB_DIR, CKPT_DIR): os.makedirs(d, exist_ok=True)
+print('RESULTS_DIR :', RESULTS_DIR)
+assert os.path.isdir(FIG_DIR) and os.path.isdir(CKPT_DIR)
+print('[VALIDATION] folders created -> PASS')

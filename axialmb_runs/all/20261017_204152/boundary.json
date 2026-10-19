@@ -1,0 +1,281 @@
+{
+  "task": "causal_discovery_boundary",
+  "what_is_measured": "Moral-graph neighborhood of each target (parents, children, spouses). Orientation accuracy is not computed.",
+  "alpha": 0.05,
+  "fdr_axial": 0.1,
+  "synthetic_summary": {
+    "pc": {
+      "n": 2,
+      "child_recall": 1.0,
+      "child_recall_n": 2,
+      "f1": 0.7857142857142858,
+      "f1_n": 2,
+      "fdr": 0.0,
+      "fdr_n": 2,
+      "n_children": 2.5,
+      "n_children_n": 2,
+      "n_parents": 0.0,
+      "n_parents_n": 2,
+      "n_pred": 3.0,
+      "n_pred_n": 2,
+      "n_spouses": 2.0,
+      "n_spouses_n": 2,
+      "n_truth": 4.5,
+      "n_truth_n": 2,
+      "parent_recall": null,
+      "parent_recall_n": 0,
+      "precision": 1.0,
+      "precision_n": 2,
+      "recall": 0.7,
+      "recall_n": 2,
+      "spouse_recall": 0.5,
+      "spouse_recall_n": 2,
+      "tp": 3.0,
+      "tp_n": 2
+    },
+    "ges": {
+      "n": 2,
+      "child_recall": 0.8333333333333333,
+      "child_recall_n": 2,
+      "f1": 0.9285714285714286,
+      "f1_n": 2,
+      "fdr": 0.0,
+      "fdr_n": 2,
+      "n_children": 2.5,
+      "n_children_n": 2,
+      "n_parents": 0.0,
+      "n_parents_n": 2,
+      "n_pred": 4.0,
+      "n_pred_n": 2,
+      "n_spouses": 2.0,
+      "n_spouses_n": 2,
+      "n_truth": 4.5,
+      "n_truth_n": 2,
+      "parent_recall": null,
+      "parent_recall_n": 0,
+      "precision": 1.0,
+      "precision_n": 2,
+      "recall": 0.875,
+      "recall_n": 2,
+      "spouse_recall": 1.0,
+      "spouse_recall_n": 2,
+      "tp": 4.0,
+      "tp_n": 2
+    },
+    "axialmb": {
+      "n": 2,
+      "child_recall": 0.8333333333333333,
+      "child_recall_n": 2,
+      "f1": 0.9285714285714286,
+      "f1_n": 2,
+      "fdr": 0.0,
+      "fdr_n": 2,
+      "n_children": 2.5,
+      "n_children_n": 2,
+      "n_parents": 0.0,
+      "n_parents_n": 2,
+      "n_pred": 4.0,
+      "n_pred_n": 2,
+      "n_spouses": 2.0,
+      "n_spouses_n": 2,
+      "n_truth": 4.5,
+      "n_truth_n": 2,
+      "parent_recall": null,
+      "parent_recall_n": 0,
+      "precision": 1.0,
+      "precision_n": 2,
+      "recall": 0.875,
+      "recall_n": 2,
+      "spouse_recall": 1.0,
+      "spouse_recall_n": 2,
+      "tp": 4.0,
+      "tp_n": 2
+    },
+    "avici": {
+      "reason": "ModuleNotFoundError: No module named 'avici'",
+      "status": "skipped"
+    }
+  },
+  "benchmark": "survey",
+  "benchmark_summary": {
+    "pc": {
+      "n": 6,
+      "child_recall": 0.4,
+      "child_recall_n": 5,
+      "f1": 0.37222222222222223,
+      "f1_n": 6,
+      "fdr": 0.0,
+      "fdr_n": 6,
+      "n_children": 1.0,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 0.6666666666666666,
+      "n_pred_n": 6,
+      "n_spouses": 0.6666666666666666,
+      "n_spouses_n": 6,
+      "n_truth": 2.6666666666666665,
+      "n_truth_n": 6,
+      "parent_recall": 0.25,
+      "parent_recall_n": 4,
+      "precision": 1.0,
+      "precision_n": 6,
+      "recall": 0.2638888888888889,
+      "recall_n": 6,
+      "spouse_recall": 0.0,
+      "spouse_recall_n": 4,
+      "tp": 0.6666666666666666,
+      "tp_n": 6
+    },
+    "ges": {
+      "n": 6,
+      "child_recall": 0.4,
+      "child_recall_n": 5,
+      "f1": 0.37222222222222223,
+      "f1_n": 6,
+      "fdr": 0.0,
+      "fdr_n": 6,
+      "n_children": 1.0,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 0.6666666666666666,
+      "n_pred_n": 6,
+      "n_spouses": 0.6666666666666666,
+      "n_spouses_n": 6,
+      "n_truth": 2.6666666666666665,
+      "n_truth_n": 6,
+      "parent_recall": 0.25,
+      "parent_recall_n": 4,
+      "precision": 1.0,
+      "precision_n": 6,
+      "recall": 0.2638888888888889,
+      "recall_n": 6,
+      "spouse_recall": 0.0,
+      "spouse_recall_n": 4,
+      "tp": 0.6666666666666666,
+      "tp_n": 6
+    },
+    "axialmb": {
+      "n": 6,
+      "child_recall": 0.2,
+      "child_recall_n": 5,
+      "f1": 0.27777777777777773,
+      "f1_n": 6,
+      "fdr": 0.0,
+      "fdr_n": 6,
+      "n_children": 1.0,
+      "n_children_n": 6,
+      "n_parents": 1.0,
+      "n_parents_n": 6,
+      "n_pred": 0.5,
+      "n_pred_n": 6,
+      "n_spouses": 0.6666666666666666,
+      "n_spouses_n": 6,
+      "n_truth": 2.6666666666666665,
+      "n_truth_n": 6,
+      "parent_recall": 0.375,
+      "parent_recall_n": 4,
+      "precision": 1.0,
+      "precision_n": 6,
+      "recall": 0.19444444444444442,
+      "recall_n": 6,
+      "spouse_recall": 0.0,
+      "spouse_recall_n": 4,
+      "tp": 0.5,
+      "tp_n": 6
+    },
+    "avici": {
+      "status": "skipped",
+      "reason": "ModuleNotFoundError: No module named 'avici'"
+    }
+  },
+  "notes": {
+    "pc": {
+      "algorithm": "PC",
+      "indep_test": "fisherz",
+      "alpha": 0.05,
+      "max_cond_requested": 3,
+      "status": "ok"
+    },
+    "ges": {
+      "algorithm": "GES",
+      "score": "bic-g",
+      "status": "ok"
+    },
+    "avici": {
+      "reason": "ModuleNotFoundError: No module named 'avici'",
+      "status": "skipped"
+    },
+    "survey_pc": {
+      "algorithm": "PC",
+      "indep_test": "chisq",
+      "alpha": 0.05,
+      "max_cond_requested": 3,
+      "status": "ok"
+    },
+    "survey_ges": {
+      "algorithm": "GES",
+      "score": "bic-d",
+      "status": "ok"
+    },
+    "survey_avici": {
+      "status": "skipped",
+      "reason": "ModuleNotFoundError: No module named 'avici'"
+    }
+  },
+  "worlds": [
+    {
+      "world": 0,
+      "family": "collider_hub",
+      "mech": "multiplicative",
+      "pc": [
+        3,
+        6
+      ],
+      "ges": [
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "avici": {
+        "status": "skipped",
+        "reason": "ModuleNotFoundError: No module named 'avici'"
+      },
+      "axialmb": [
+        0,
+        1,
+        2,
+        3,
+        5
+      ]
+    },
+    {
+      "world": 1,
+      "family": "collider_hub",
+      "mech": "threshold",
+      "pc": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ges": [
+        1,
+        2,
+        4
+      ],
+      "avici": {
+        "status": "skipped",
+        "reason": "ModuleNotFoundError: No module named 'avici'"
+      },
+      "axialmb": [
+        0,
+        1,
+        3
+      ]
+    }
+  ]
+}

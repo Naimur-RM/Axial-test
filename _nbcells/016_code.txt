@@ -1,0 +1,80 @@
+import torch, torch.nn as nn, torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint
+
+class Attn(nn.Module):
+    """Memory-efficient attention via fused scaled_dot_product_attention.
+    Never materialises the L x L attention matrix (flash/mem-efficient kernel),
+    which is what makes the long SAMPLE axis affordable."""
+    def __init__(self, d, heads):
+        super().__init__(); self.h = heads
+        self.qkv = nn.Linear(d, 3 * d); self.o = nn.Linear(d, d)
+    def forward(self, x):                      # (B, L, D)
+        B, L, D = x.shape
+        q, k, v = self.qkv(x).chunk(3, -1)
+        q, k, v = [t.view(B, L, self.h, D // self.h).transpose(1, 2) for t in (q, k, v)]
+        o = F.scaled_dot_product_attention(q, k, v)
+        return self.o(o.transpose(1, 2).reshape(B, L, D))
+
+class AxialBlock(nn.Module):
+    """One block = attention ACROSS FEATURES (within a sample)
+                 + attention ACROSS SAMPLES (within a feature) + FFN."""
+    def __init__(self, d, heads, ff_mult=2, dropout=0.0):
+        super().__init__()
+        self.ln1, self.ln2, self.ln3 = nn.LayerNorm(d), nn.LayerNorm(d), nn.LayerNorm(d)
+        self.row_attn, self.col_attn = Attn(d, heads), Attn(d, heads)
+        self.ff = nn.Sequential(nn.Linear(d, ff_mult * d), nn.GELU(), nn.Linear(ff_mult * d, d))
+    def forward(self, h):                      # h: (B, N, C, D)
+        B, N, C, D = h.shape
+        h = h + self.row_attn(self.ln1(h).reshape(B * N, C, D)).reshape(B, N, C, D)
+        x = self.ln2(h).permute(0, 2, 1, 3).reshape(B * C, N, D)
+        h = h + self.col_attn(x).reshape(B, C, N, D).permute(0, 2, 1, 3)
+        return h + self.ff(self.ln3(h))
+
+class AxialMB(nn.Module):
+    """Input: X (B,N,p), y (B,N), optional stats (B,p,S).
+    Outputs per feature: membership logit, 3-way type {none,PC,spouse},
+    2-way orientation {parent,child}.
+    No positional encoding on either axis -> permutation invariant over samples,
+    permutation equivariant over features.
+    `grad_checkpoint=True` recomputes each block in the backward pass: activation
+    memory drops from (blocks x ~6) copies to (blocks + ~6), at ~30% extra compute."""
+    def __init__(self, d=64, heads=4, blocks=4, n_stats=6, dropout=0.0, grad_checkpoint=False):
+        super().__init__()
+        self.d = d; self.grad_checkpoint = grad_checkpoint
+        self.val_emb = nn.Linear(1, d)
+        self.target_flag = nn.Parameter(torch.randn(d) * 0.02)
+        self.stat_proj = nn.Linear(n_stats, d)
+        self.blocks = nn.ModuleList([AxialBlock(d, heads, dropout=dropout) for _ in range(blocks)])
+        self.ln_out = nn.LayerNorm(d)
+        self.member_head = nn.Linear(d, 1)
+        self.type_head = nn.Linear(d, 3)
+        self.orient_head = nn.Linear(d, 2)
+
+    def forward(self, X, y, stats=None):
+        B, N, p = X.shape
+        cols = torch.cat([y.unsqueeze(-1), X], dim=-1)
+        h = self.val_emb(cols.unsqueeze(-1))
+        flag = torch.zeros(1, 1, p + 1, 1, device=X.device, dtype=h.dtype)
+        flag[:, :, 0, :] = 1.0
+        h = h + flag * self.target_flag
+        if stats is not None:
+            s = self.stat_proj(stats)
+            s = torch.cat([torch.zeros(B, 1, self.d, device=X.device, dtype=s.dtype), s], 1)
+            h = h + s.unsqueeze(1)
+        for blk in self.blocks:
+            h = (checkpoint(blk, h, use_reentrant=False)
+                 if (self.grad_checkpoint and self.training) else blk(h))
+        h = self.ln_out(h).mean(dim=1)[:, 1:, :]
+        return self.member_head(h).squeeze(-1), self.type_head(h), self.orient_head(h)
+
+def estimate_memory_gb(B, N, p, d, blocks, bf16=True, grad_checkpoint=True, k=6):
+    """Predict peak ACTIVATION memory (GB). Add ~4x params for weights+Adam state."""
+    cell = B * N * (p + 1) * d * (2 if bf16 else 4) / 1e9
+    return (blocks + k) * cell if grad_checkpoint else blocks * k * cell
+
+def autoconfig(budget_gb, d, blocks, p, N, bf16=True, grad_checkpoint=True, B_max=16):
+    """Largest micro-batch that fits, plus accumulation steps to keep effective batch."""
+    for B in range(B_max, 0, -1):
+        if estimate_memory_gb(B, N, p, d, blocks, bf16, grad_checkpoint) <= budget_gb:
+            return B, max(1, B_max // B)
+    return 1, B_max

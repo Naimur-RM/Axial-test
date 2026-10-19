@@ -1,0 +1,153 @@
+{
+  "suite_seed": 20261019,
+  "per_slice": 1,
+  "summary": {
+    "continuous": {
+      "axialmb_v2": 0.6701,
+      "iamb": 0.9638,
+      "pc": 0.7401,
+      "ges": 0.9198
+    },
+    "discrete": {
+      "axialmb_v2": 0.219,
+      "iamb": 0.7277,
+      "pc": 0.7963,
+      "ges": 0.9048
+    },
+    "mixed": {
+      "axialmb_v2": 0.1255,
+      "iamb": 0.6866,
+      "pc": 0.6354,
+      "ges": 0.7561
+    },
+    "lattice": {
+      "axialmb_v2": 0.6333,
+      "iamb": 0.7702,
+      "pc": 0.7323,
+      "ges": 0.7505
+    },
+    "bnlearn_like": {
+      "axialmb_v2": 0.178,
+      "iamb": 0.4864,
+      "pc": 0.4932,
+      "ges": 0.7383
+    },
+    "lagged": {
+      "axialmb_v2": 0.6667,
+      "pc1": 1.0,
+      "iamb": 1.0
+    }
+  },
+  "gate": {
+    "continuous": {
+      "ours": 0.6701,
+      "best_baseline": "iamb",
+      "best_baseline_f1": 0.9638,
+      "passed": false
+    },
+    "discrete": {
+      "ours": 0.219,
+      "best_baseline": "ges",
+      "best_baseline_f1": 0.9048,
+      "passed": false
+    },
+    "mixed": {
+      "ours": 0.1255,
+      "best_baseline": "ges",
+      "best_baseline_f1": 0.7561,
+      "passed": false
+    },
+    "lattice": {
+      "ours": 0.6333,
+      "best_baseline": "iamb",
+      "best_baseline_f1": 0.7702,
+      "passed": false
+    },
+    "bnlearn_like": {
+      "ours": 0.178,
+      "best_baseline": "ges",
+      "best_baseline_f1": 0.7383,
+      "passed": false
+    },
+    "lagged": {
+      "ours": 0.6667,
+      "best_baseline": "pc1",
+      "best_baseline_f1": 1.0,
+      "passed": false
+    }
+  },
+  "all_passed": false,
+  "worlds": [
+    {
+      "slice": "continuous",
+      "index": 0,
+      "kind": "continuous",
+      "family": "erdos_renyi",
+      "p": 15,
+      "n": 879,
+      "axialmb_v2": 0.6700529100529102,
+      "iamb": 0.9638095238095239,
+      "pc": 0.7401473380420748,
+      "ges": 0.919844155844156
+    },
+    {
+      "slice": "discrete",
+      "index": 0,
+      "kind": "discrete",
+      "family": "erdos_renyi",
+      "p": 20,
+      "n": 1374,
+      "axialmb_v2": 0.21904761904761902,
+      "iamb": 0.7276643990929704,
+      "pc": 0.7962585034013605,
+      "ges": 0.9047619047619048
+    },
+    {
+      "slice": "mixed",
+      "index": 0,
+      "kind": "mixed",
+      "family": "erdos_renyi",
+      "p": 21,
+      "n": 711,
+      "axialmb_v2": 0.12552669552669554,
+      "iamb": 0.6865606138787254,
+      "pc": 0.6353864552200467,
+      "ges": 0.7560750275584035
+    },
+    {
+      "slice": "lattice",
+      "index": 0,
+      "kind": "continuous",
+      "family": "lattice",
+      "p": 21,
+      "n": 873,
+      "axialmb_v2": 0.6333333333333332,
+      "iamb": 0.7702271273699844,
+      "pc": 0.7323438466295609,
+      "ges": 0.7505008219293934
+    },
+    {
+      "slice": "bnlearn_like",
+      "index": 0,
+      "kind": "discrete",
+      "family": "erdos_renyi",
+      "p": 23,
+      "n": 753,
+      "axialmb_v2": 0.17803030303030304,
+      "iamb": 0.48641938869211604,
+      "pc": 0.49319821592548857,
+      "ges": 0.7383255633255633
+    },
+    {
+      "slice": "lagged",
+      "index": 0,
+      "kind": "lagged",
+      "family": "var",
+      "p": 4,
+      "n": 772,
+      "axialmb_v2": 0.6666666666666666,
+      "pc1": 1.0,
+      "iamb": 1.0
+    }
+  ]
+}

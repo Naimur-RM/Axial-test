@@ -1,0 +1,34 @@
+# Axial-Transformer Markov Blanket Discovery, with Certified Verification
+### Pretrained PFN + statistical operator + e-process validation
+
+**What this builds, in one line:** a small *prior-fitted network* (axial transformer) that reads a whole
+`N x p` data matrix and predicts which features are in the Markov blanket of a target `Y` (and their
+roles), fused with a lightweight statistical operator, then **certified** by a betting e-process + e-BH
+so the returned set carries an **FDR <= alpha** guarantee.
+
+### Architecture
+| Block | Problem it solves |
+|---|---|
+| Synthetic prior (9 graph families x 9 mechanisms) | No labelled MB data exists in the real world; simulation gives unlimited ground truth |
+| **Axial transformer** (row attn <-> column attn) | Reads the raw matrix, not hand-made summaries; catches weak / nonlinear / spouse structure |
+| **Statistical operator** (precision matrix, collider boost, ...) | Fast, assumption-light, does **not** degrade off-distribution — the OOD safety net |
+| **Fusion stacker** | Combines learned + classical signal; keeps power when either one is weak |
+| **E-process verifier** (role-aware conditioning) | Makes it trustworthy: no neural error can inflate the error rate |
+| **e-BH** | Turns tangled tests into a set with provable FDR <= alpha |
+
+### Key design properties (verified in Section 6)
+- **Permutation invariant over samples** — a dataset is a *set* of rows, not a sequence
+- **Permutation equivariant over features** — column index carries no meaning
+- **Validity is decoupled from the network**: the transformer only picks *what to test*; the betting
+  stage decides *what is true*. A bad network costs power, never the FDR guarantee.
+
+> **Honest framing.** Axial/alternating attention over data matrices for amortised causal structure
+> learning already exists (AVICI line of work; TabPFN/PFNs; PFN-based causal discovery). The
+> contribution framing here is the **fusion + anytime-valid certification**, not the axial block itself.
+
+---
+**Scope (hard caps):** at most **50 features** and blanket size at most **|MB| = 25**.
+That is the regime where the standard causal benchmarks live, and Section 12 evaluates on
+the real ones: **asia, survey, sachs, child** (plus insurance, water, alarm, mildew, ...).
+
+**Runtime:** ~15-25 min on a Colab T4/GPU at default settings. Set `Runtime -> Change runtime type -> GPU`.

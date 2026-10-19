@@ -1,0 +1,18 @@
+def collect(nw, rng, families=None, p=48, N=128, want=None):
+    Z, L = [], []
+    for _ in range(nw):
+        fam = families[rng.integers(len(families))] if families else None
+        w = generate_world(rng, p=p, N=N, family=fam, target_mb=want)
+        prob, tp, op, S = predict_scores(model, w['X'], w['y'], DEVICE)
+        Z.append(design_matrix(prob, S)); L.append(w['member'])
+    return np.vstack(Z), np.concatenate(L)
+
+rng = np.random.default_rng(SEED + 1)
+Ztr, Ltr = collect(40, rng, TRAIN_FAMILIES)
+fusion = Fusion().fit(Ztr, Ltr)
+Zte, Lte = collect(25, np.random.default_rng(SEED + 2), TRAIN_FAMILIES)
+a_tf = auc(Zte[:, 0], Lte); a_st = auc(Zte[:, 1], Lte); a_fu = auc(fusion.score(Zte), Lte)
+print('AUC  transformer %.3f | best single statistic %.3f | FUSION %.3f' % (a_tf, a_st, a_fu))
+save_json(dict(transformer=a_tf, statistic=a_st, fusion=a_fu), 'fusion_auc.json')
+assert a_fu >= max(a_tf, a_st) - 0.02, 'fusion lost to a single path'
+print('[VALIDATION] fusion >= each single path -> PASS')

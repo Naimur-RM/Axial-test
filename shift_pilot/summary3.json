@@ -1,0 +1,150 @@
+{
+ "n=300 descendant (count=199)": {
+  "oracle_pa/gbm/clip": 0.055,
+  "oracle_pa/gbm/trim": 0.065,
+  "oracle_pa/big/clip": 0.03,
+  "oracle_pa/big/trim": 0.03,
+  "proposer_good": 0.01,
+  "proposer_good+extend": 0.0,
+  "proposer_bad": 0.09,
+  "proposer_bad+extend": 0.01,
+  "greedy": 0.02
+ },
+ "n=300 other (count=301)": {
+  "oracle_pa/gbm/clip": 0.076,
+  "oracle_pa/gbm/trim": 0.09,
+  "oracle_pa/big/clip": 0.063,
+  "oracle_pa/big/trim": 0.063,
+  "proposer_good": 0.043,
+  "proposer_good+extend": 0.007,
+  "proposer_bad": 0.047,
+  "proposer_bad+extend": 0.01,
+  "greedy": 0.0
+ },
+ "n=300 target (count=100)": {
+  "oracle_pa/gbm/clip": 0.96,
+  "oracle_pa/gbm/trim": 0.97,
+  "oracle_pa/big/clip": 0.97,
+  "oracle_pa/big/trim": 0.96,
+  "proposer_good": 0.94,
+  "proposer_good+extend": 0.86,
+  "proposer_bad": 0.94,
+  "proposer_bad+extend": 0.84,
+  "greedy": 0.78
+ },
+ "n=1000 descendant (count=197)": {
+  "oracle_pa/gbm/clip": 0.076,
+  "oracle_pa/gbm/trim": 0.071,
+  "oracle_pa/big/clip": 0.046,
+  "oracle_pa/big/trim": 0.036,
+  "proposer_good": 0.025,
+  "proposer_good+extend": 0.005,
+  "proposer_bad": 0.112,
+  "proposer_bad+extend": 0.01,
+  "greedy": 0.01
+ },
+ "n=1000 other (count=303)": {
+  "oracle_pa/gbm/clip": 0.063,
+  "oracle_pa/gbm/trim": 0.043,
+  "oracle_pa/big/clip": 0.053,
+  "oracle_pa/big/trim": 0.059,
+  "proposer_good": 0.02,
+  "proposer_good+extend": 0.007,
+  "proposer_bad": 0.03,
+  "proposer_bad+extend": 0.013,
+  "greedy": 0.0
+ },
+ "n=1000 target (count=100)": {
+  "oracle_pa/gbm/clip": 0.99,
+  "oracle_pa/gbm/trim": 0.99,
+  "oracle_pa/big/clip": 0.98,
+  "oracle_pa/big/trim": 0.99,
+  "proposer_good": 0.98,
+  "proposer_good+extend": 0.98,
+  "proposer_bad": 0.97,
+  "proposer_bad+extend": 0.95,
+  "greedy": 0.92
+ },
+ "n=300 target/func (count=13)": {
+  "oracle_pa/gbm/clip": 0.846,
+  "oracle_pa/gbm/trim": 0.846,
+  "oracle_pa/big/clip": 0.846,
+  "oracle_pa/big/trim": 0.846,
+  "proposer_good": 0.769,
+  "proposer_good+extend": 0.692,
+  "proposer_bad": 0.692,
+  "proposer_bad+extend": 0.769,
+  "greedy": 0.154
+ },
+ "n=300 target/mean (count=55)": {
+  "oracle_pa/gbm/clip": 1.0,
+  "oracle_pa/gbm/trim": 1.0,
+  "oracle_pa/big/clip": 1.0,
+  "oracle_pa/big/trim": 1.0,
+  "proposer_good": 1.0,
+  "proposer_good+extend": 1.0,
+  "proposer_bad": 1.0,
+  "proposer_bad+extend": 0.982,
+  "greedy": 0.945
+ },
+ "n=300 target/scale (count=32)": {
+  "oracle_pa/gbm/clip": 0.938,
+  "oracle_pa/gbm/trim": 0.969,
+  "oracle_pa/big/clip": 0.969,
+  "oracle_pa/big/trim": 0.938,
+  "proposer_good": 0.906,
+  "proposer_good+extend": 0.688,
+  "proposer_bad": 0.938,
+  "proposer_bad+extend": 0.625,
+  "greedy": 0.75
+ },
+ "n=1000 target/func (count=10)": {
+  "oracle_pa/gbm/clip": 0.9,
+  "oracle_pa/gbm/trim": 0.9,
+  "oracle_pa/big/clip": 0.9,
+  "oracle_pa/big/trim": 0.9,
+  "proposer_good": 0.9,
+  "proposer_good+extend": 0.9,
+  "proposer_bad": 0.8,
+  "proposer_bad+extend": 0.8,
+  "greedy": 0.6
+ },
+ "n=1000 target/mean (count=56)": {
+  "oracle_pa/gbm/clip": 1.0,
+  "oracle_pa/gbm/trim": 1.0,
+  "oracle_pa/big/clip": 1.0,
+  "oracle_pa/big/trim": 1.0,
+  "proposer_good": 1.0,
+  "proposer_good+extend": 1.0,
+  "proposer_bad": 1.0,
+  "proposer_bad+extend": 1.0,
+  "greedy": 0.982
+ },
+ "n=1000 target/scale (count=34)": {
+  "oracle_pa/gbm/clip": 1.0,
+  "oracle_pa/gbm/trim": 1.0,
+  "oracle_pa/big/clip": 0.971,
+  "oracle_pa/big/trim": 1.0,
+  "proposer_good": 0.971,
+  "proposer_good+extend": 0.971,
+  "proposer_bad": 0.971,
+  "proposer_bad+extend": 0.912,
+  "greedy": 0.912
+ },
+ "n=300 mean tests per variable": {
+  "proposer_good": 2.75,
+  "proposer_good+extend": 8.4,
+  "proposer_bad": 2.96,
+  "proposer_bad+extend": 9.19,
+  "greedy": 4.86
+ },
+ "n=300 mean kept fraction after trimming": 0.978,
+ "n=1000 mean tests per variable": {
+  "proposer_good": 2.75,
+  "proposer_good+extend": 8.39,
+  "proposer_bad": 2.97,
+  "proposer_bad+extend": 9.19,
+  "greedy": 5.38
+ },
+ "n=1000 mean kept fraction after trimming": 0.985
+}

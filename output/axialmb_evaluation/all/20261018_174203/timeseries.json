@@ -1,0 +1,191 @@
+{
+  "task": "timeseries_vs_pcmci_pc1",
+  "what_is_measured": "Lagged parent set. PC1 is the parent-screening stage of PCMCI, before the MCI contemporaneous tests. No orientation is scored.",
+  "synthetic": {
+    "linear_sparse": {
+      "pc1": {
+        "precision": 0.9027777777777778,
+        "recall": 1.0,
+        "f1": 0.9305555555555555,
+        "fdr": 0.09722222222222221,
+        "tp": 1.5833333333333333,
+        "n_pred": 1.8333333333333333,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "axialmb": {
+        "precision": 0.9305555555555555,
+        "recall": 1.0,
+        "f1": 0.9555555555555556,
+        "fdr": 0.06944444444444443,
+        "tp": 1.5833333333333333,
+        "n_pred": 1.75,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": 0.025000000000000133,
+        "recall_ours_minus_pc1": 0.0,
+        "precision_ours_minus_pc1": 0.02777777777777768
+      },
+      "pc1_info": {
+        "implementation": "tigramite.run_pc_stable",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 5,
+        "lag": 2,
+        "n": 2000,
+        "nonlinear": false,
+        "density": 0.15
+      }
+    },
+    "nonlinear_sparse": {
+      "pc1": {
+        "precision": 0.9027777777777778,
+        "recall": 1.0,
+        "f1": 0.9305555555555555,
+        "fdr": 0.09722222222222221,
+        "tp": 1.5833333333333333,
+        "n_pred": 1.8333333333333333,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "axialmb": {
+        "precision": 0.8472222222222222,
+        "recall": 1.0,
+        "f1": 0.8972222222222221,
+        "fdr": 0.15277777777777776,
+        "tp": 1.5833333333333333,
+        "n_pred": 2.0,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": -0.033333333333333326,
+        "recall_ours_minus_pc1": 0.0,
+        "precision_ours_minus_pc1": -0.05555555555555558
+      },
+      "pc1_info": {
+        "implementation": "tigramite.run_pc_stable",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 5,
+        "lag": 2,
+        "n": 2000,
+        "nonlinear": true,
+        "density": 0.15
+      }
+    },
+    "linear_denser": {
+      "pc1": {
+        "precision": 0.9629629629629629,
+        "recall": 0.9675925925925926,
+        "f1": 0.9587301587301588,
+        "fdr": 0.037037037037037035,
+        "tp": 3.3333333333333335,
+        "n_pred": 3.5,
+        "n_truth": 3.4444444444444446,
+        "n": 3
+      },
+      "axialmb": {
+        "precision": 0.9425925925925925,
+        "recall": 1.0,
+        "f1": 0.9641975308641976,
+        "fdr": 0.05740740740740741,
+        "tp": 3.4444444444444446,
+        "n_pred": 3.6111111111111107,
+        "n_truth": 3.4444444444444446,
+        "n": 3
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": 0.005467372134038806,
+        "recall_ours_minus_pc1": 0.03240740740740744,
+        "precision_ours_minus_pc1": -0.020370370370370372
+      },
+      "pc1_info": {
+        "implementation": "tigramite.run_pc_stable",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 6,
+        "lag": 2,
+        "n": 2000,
+        "nonlinear": false,
+        "density": 0.3
+      }
+    }
+  },
+  "gas_furnace": {
+    "note": "Box-Jenkins Series J. Scored claims: CO2 depends on gas rate at lags 3, 4 and 5, and past CO2 is not a parent of the gas input.",
+    "pc1": {
+      "input_delay_recall": 0.0,
+      "input_delay_hits": [],
+      "exogeneity_violations": [],
+      "n_exogeneity_violations": 0,
+      "parents_of_gas": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parents_of_co2": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "pc1_info": {
+      "implementation": "tigramite.run_pc_stable",
+      "alpha": 0.05,
+      "tau_max": 5
+    },
+    "axialmb": {
+      "input_delay_recall": 0.0,
+      "input_delay_hits": [],
+      "exogeneity_violations": [],
+      "n_exogeneity_violations": 0,
+      "parents_of_gas": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parents_of_co2": [
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    "where_axial_helps": {
+      "input_delay_recall_ours_minus_pc1": 0.0,
+      "exogeneity_violations_ours_minus_pc1": 0
+    }
+  }
+}

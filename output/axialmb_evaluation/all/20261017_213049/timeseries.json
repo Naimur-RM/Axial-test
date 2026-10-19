@@ -1,0 +1,229 @@
+{
+  "task": "timeseries_vs_pcmci_pc1",
+  "what_is_measured": "Lagged parent set. PC1 is the parent-screening stage of PCMCI, before the MCI contemporaneous tests. No orientation is scored.",
+  "synthetic": {
+    "linear_sparse": {
+      "pc1": {
+        "precision": 0.9027777777777778,
+        "recall": 1.0,
+        "f1": 0.9305555555555555,
+        "fdr": 0.09722222222222221,
+        "tp": 1.5833333333333333,
+        "n_pred": 1.8333333333333333,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "axialmb": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fdr": 0.0,
+        "tp": 1.5833333333333333,
+        "n_pred": 1.5833333333333333,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": 0.06944444444444453,
+        "recall_ours_minus_pc1": 0.0,
+        "precision_ours_minus_pc1": 0.09722222222222221
+      },
+      "pc1_info": {
+        "implementation": "fisherz_pc1",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 5,
+        "lag": 2,
+        "n": 2000,
+        "nonlinear": false,
+        "density": 0.15
+      }
+    },
+    "nonlinear_sparse": {
+      "pc1": {
+        "precision": 0.9027777777777778,
+        "recall": 1.0,
+        "f1": 0.9305555555555555,
+        "fdr": 0.09722222222222221,
+        "tp": 1.5833333333333333,
+        "n_pred": 1.8333333333333333,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "axialmb": {
+        "precision": 0.9583333333333334,
+        "recall": 0.9583333333333334,
+        "f1": 0.9444444444444443,
+        "fdr": 0.041666666666666664,
+        "tp": 1.5,
+        "n_pred": 1.5833333333333333,
+        "n_truth": 1.5833333333333333,
+        "n": 3
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": 0.01388888888888884,
+        "recall_ours_minus_pc1": -0.04166666666666663,
+        "precision_ours_minus_pc1": 0.05555555555555558
+      },
+      "pc1_info": {
+        "implementation": "fisherz_pc1",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 5,
+        "lag": 2,
+        "n": 2000,
+        "nonlinear": true,
+        "density": 0.15
+      }
+    },
+    "linear_denser": {
+      "pc1": {
+        "precision": 0.9629629629629629,
+        "recall": 0.9675925925925926,
+        "f1": 0.9587301587301588,
+        "fdr": 0.037037037037037035,
+        "tp": 3.3333333333333335,
+        "n_pred": 3.5,
+        "n_truth": 3.4444444444444446,
+        "n": 3
+      },
+      "axialmb": {
+        "precision": 0.975,
+        "recall": 1.0,
+        "f1": 0.9858906525573192,
+        "fdr": 0.024999999999999998,
+        "tp": 3.4444444444444446,
+        "n_pred": 3.555555555555556,
+        "n_truth": 3.4444444444444446,
+        "n": 3
+      },
+      "gain_vs_pc1": {
+        "f1_ours_minus_pc1": 0.02716049382716046,
+        "recall_ours_minus_pc1": 0.03240740740740744,
+        "precision_ours_minus_pc1": 0.012037037037037068
+      },
+      "pc1_info": {
+        "implementation": "fisherz_pc1",
+        "alpha": 0.05,
+        "tau_max": 2
+      },
+      "setting": {
+        "d": 6,
+        "lag": 2,
+        "n": 2000,
+        "nonlinear": false,
+        "density": 0.3
+      }
+    }
+  },
+  "gas_furnace": {
+    "note": "Box-Jenkins Series J. Scored claims: CO2 depends on gas rate at lags 3, 4 and 5, and past CO2 is not a parent of the gas input.",
+    "pc1": {
+      "input_delay_recall": 0.3333333333333333,
+      "input_delay_hits": [
+        [
+          0,
+          3
+        ]
+      ],
+      "exogeneity_violations": [],
+      "n_exogeneity_violations": 0,
+      "parents_of_gas": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parents_of_co2": [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    "pc1_info": {
+      "implementation": "fisherz_pc1",
+      "alpha": 0.05,
+      "tau_max": 5
+    },
+    "axialmb": {
+      "input_delay_recall": 1.0,
+      "input_delay_hits": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ]
+      ],
+      "exogeneity_violations": [],
+      "n_exogeneity_violations": 0,
+      "parents_of_gas": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "parents_of_co2": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    "where_axial_helps": {
+      "input_delay_recall_ours_minus_pc1": 0.6666666666666667,
+      "exogeneity_violations_ours_minus_pc1": 0
+    }
+  }
+}

@@ -1,0 +1,4 @@
+**Validation — this is the architectural correctness proof:**
+1. output shapes, 2. permuting **samples** must not change the output (invariance),
+3. permuting **features** must permute the output identically (equivariance),
+4. the model accepts **variable** `N` and `p`.

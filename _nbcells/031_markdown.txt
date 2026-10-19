@@ -1,0 +1,9 @@
+## 11 - Evaluation: in-distribution, out-of-distribution, and |MB| scaling
+
+Three questions:
+1. Does it work on fresh worlds from **training** families?
+2. Does it hold up on the **held-out** family it never saw? (This is where fusion earns its keep.)
+3. How does performance **degrade as |MB| grows** toward 50?
+
+**What we expect:** solid in-distribution; some drop OOD; and a clear decline as `|MB|` grows —
+large blankets with modest `N` are intrinsically hard, and Tier-A compute will not fully solve them.

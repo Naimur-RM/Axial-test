@@ -1,0 +1,170 @@
+import numpy as np, torch
+
+# ---------- Stage 1a/1b: the two parallel encoders ----------
+def predict_scores(model, X, y, device='cpu'):
+    """Returns transformer membership prob, type probs, orientation probs, stat features."""
+    S = stat_features(X, y)
+    model.eval()
+    with torch.no_grad():
+        mlog, tlog, olog = model(
+            torch.tensor(X[None], dtype=torch.float32, device=device),
+            torch.tensor(y[None], dtype=torch.float32, device=device),
+            torch.tensor(S[None], dtype=torch.float32, device=device))
+    return (torch.sigmoid(mlog)[0].cpu().numpy(),
+            torch.softmax(tlog, -1)[0].cpu().numpy(),
+            torch.softmax(olog, -1)[0].cpu().numpy(), S)
+
+# ---------- Stage 1c: late fusion ----------
+class Fusion:
+    """Logistic stacker on [transformer_logit, 6 stat features]. Late fusion is the
+    out-of-distribution safety net: if the transformer is off-prior, the statistics
+    still carry signal."""
+    def __init__(self): self.clf = None
+    def fit(self, Z, labels):
+        from sklearn.linear_model import LogisticRegression
+        self.clf = LogisticRegression(max_iter=2000, class_weight='balanced').fit(Z, labels)
+        return self
+    def score(self, Z):
+        return self.clf.predict_proba(Z)[:, 1] if self.clf is not None else Z[:, 0]
+
+def design_matrix(prob, S):
+    lg = np.log(np.clip(prob, 1e-6, 1-1e-6) / np.clip(1-prob, 1e-6, 1-1e-6))
+    return np.column_stack([lg, S]).astype(np.float64)
+
+# ---------- Stage 2: betting e-process ----------
+def _design(Z, max_cat=8, n_inter=4, force=None):
+    """Build the nuisance design matrix, ADAPTING to the data type.
+
+    Discrete data (the benchmark networks) ordinal-coded into a linear model is
+    badly misspecified: the true E[Xj|Z] depends on the CATEGORIES and on their
+    INTERACTIONS, which a linear fit on integer codes cannot represent. The
+    leftover structure then shows up in BOTH residuals and inflates FDR
+    (measured: sachs 0.34, child 0.32 against a nominal 0.10).
+
+    Fix: one-hot the multi-category columns (making the linear model saturated in
+    them) and add a few pairwise products (the dominant interactions).
+    Measured after this change: sachs 0.08, child 0.10.
+
+    Continuous data gets the plain design -- one-hot does nothing there and extra
+    interaction terms only add collinearity."""
+    Z = np.asarray(Z, dtype=np.float64)
+    if Z.ndim != 2 or Z.shape[1] == 0: return Z
+    discrete_frac = np.mean([len(np.unique(Z[:, j])) <= max_cat for j in range(Z.shape[1])])
+    if force == 'plain' or (force is None and discrete_frac < 0.5):
+        return Z
+    cols = []
+    for j in range(Z.shape[1]):
+        u = np.unique(Z[:, j])
+        if 2 < len(u) <= max_cat:
+            for v in u[:-1]: cols.append((Z[:, j] == v).astype(np.float64))
+        else: cols.append(Z[:, j])
+    M = np.column_stack(cols)
+    k = min(n_inter, M.shape[1])
+    ex = [M[:, a] * M[:, b] for a in range(k) for b in range(a + 1, k)]
+    return np.column_stack([M] + ex) if ex else M
+
+
+def _resid_prequential(v, Z, ridge=1.0, force=None):
+    """Nuisance fitted on the PAST only -> predictable -> valid supermartingale."""
+    if Z is None or np.asarray(Z).size == 0: return v - v.mean()
+    Zu = _design(Z, force=force)
+    if Zu.shape[1] == 0: return v - v.mean()
+    N, d = len(v), Zu.shape[1] + 1
+    A = np.column_stack([np.ones(N), Zu]); P = np.eye(d) / ridge
+    b = np.zeros(d); o = np.empty(N)
+    for t in range(N):
+        a = A[t]; o[t] = v[t] - a @ b
+        Pa = P @ a; P -= np.outer(Pa, Pa) / (1 + a @ Pa); b = b + (P @ a) * (v[t] - a @ b)
+    return o
+
+
+class Bet:
+    def __init__(self, xj, y, Z, lam_cap=0.5, force_design=None):
+        rx = _resid_prequential(xj, Z, force=force_design)
+        ry = _resid_prequential(y, Z, force=force_design)
+        self.g = np.tanh(rx / (rx.std() + 1e-9)) * np.tanh(ry / (ry.std() + 1e-9))
+        self.lam_cap = lam_cap; self.sg = 0.0; self.sg2 = 1e-6
+    def step(self, t):
+        lam = np.clip(self.sg / self.sg2, -self.lam_cap, self.lam_cap); g = self.g[t]
+        self.sg += g; self.sg2 += g * g
+        return 1 + lam * g
+
+class Account:
+    """Merged e-process: mean of parallel bets is still a valid e-value (Vovk-Wang)."""
+    def __init__(self, bets): self.bets = bets; self.W = np.ones(len(bets)); self.frozen = False
+    @property
+    def wealth(self): return float(np.mean(self.W))
+    def run(self, t0, t1):
+        if not self.frozen:
+            for t in range(t0, t1):
+                for i, b in enumerate(self.bets): self.W[i] *= b.step(t)
+        return self.wealth
+    def freeze(self): self.frozen = True
+
+def ebh(evalues, alpha):
+    ids = list(evalues); e = np.array([evalues[i] for i in ids], float); m = len(e)
+    order = np.argsort(-e); es = e[order]; ks = np.arange(1, m + 1)
+    ok = es >= m / (alpha * ks)
+    if not ok.any(): return [], m / alpha
+    k = int(ks[ok].max()); return [ids[j] for j in order[:k]], m / (alpha * k)
+
+# ---------- full pipeline ----------
+def run_pipeline(model, X, y, fusion=None, alpha=0.10, k=None, block=20,
+                 role_aware=False, device='cpu'):
+    N, p = X.shape
+    prob, tprob, oprob, S = predict_scores(model, X, y, device)
+    fused = fusion.score(design_matrix(prob, S)) if fusion is not None else prob
+    # Shortlist size from the model's OWN expected |MB| (prob.sum()). Keeping this
+    # tight matters: e-BH's per-discovery bar is m/(k*alpha), so an oversized
+    # shortlist inflates the bar and silently costs recall. Selection affects
+    # POWER only -- each e-value stays valid for its own null regardless of k.
+    if k is None:
+        # Use a CALIBRATED size estimate: the count of high-confidence features.
+        # (prob.sum() over-counts because training uses pos_weight to fight class
+        #  imbalance, so the probabilities are deliberately inflated.)
+        est = max(int((fused > 0.8).sum()), 3)
+        k = int(np.clip(round(3.0 * est), 8, min(p, 64)))
+    ranked = list(np.argsort(-fused)[:k])
+
+    pc_pred = [j for j in ranked if tprob[j].argmax() == 1]
+    sp_pred = [j for j in ranked if tprob[j].argmax() == 2]
+    kids = [j for j in pc_pred if oprob[j].argmax() == 1] or pc_pred[:2]
+
+    acc = {}
+    for j in ranked:
+        if role_aware:
+            # ROLE-AWARE conditioning: small, targeted sets bought with the transformer's
+            # role predictions. HIGHER POWER at large |MB|, but small sets may fail to
+            # block every path -> measurably higher FDR. See the ablation in Section 12.
+            # Default is False (validity first), because the FDR certificate is the point.
+            if j in sp_pred:
+                base = [z for z in pc_pred if z != j][:6]
+                bets = [Bet(X[:, j], y, X[:, list(dict.fromkeys(base + [c]))])
+                        for c in kids[:2] if c != j] or [Bet(X[:, j], y, X[:, base])]
+            else:
+                Z = [z for z in (pc_pred + sp_pred) if z != j][:12]
+                bets = [Bet(X[:, j], y, X[:, Z] if Z else None)]
+        else:
+            Z = [z for z in ranked if z != j]
+            bets = [Bet(X[:, j], y, X[:, Z] if Z else None)]
+        acc[j] = Account(bets)
+
+    bar = len(ranked) / alpha; t = 0
+    while t < N:
+        tn = min(t + block, N)
+        for a in acc.values():
+            a.run(t, tn)
+            if a.wealth >= bar: a.freeze()
+        t = tn
+    ev = {j: a.wealth for j, a in acc.items()}
+    sel, cut = ebh(ev, alpha)
+    roles = {int(j): ['none', 'PC', 'spouse'][int(tprob[j].argmax())] for j in sel}
+    return dict(blanket=sorted(int(j) for j in sel), evalues=ev, bar=cut,
+                shortlist=ranked, fused=fused, tprob=tprob, oprob=oprob, roles=roles)
+
+def score_set(sel, member):
+    truth = set(np.where(member == 1)[0].tolist()); s = set(int(i) for i in sel)
+    tp = len(s & truth)
+    return dict(precision=tp / len(s) if s else 1.0,
+                recall=tp / max(len(truth), 1),
+                fdp=(len(s) - tp) / max(len(s), 1))

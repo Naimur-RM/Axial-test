@@ -1,0 +1,14 @@
+w = generate_world(np.random.default_rng(3), p=MAX_FEATURES, N=256,
+                   family='collider_hub', mech='linear_gaussian', target_mb=8)
+F = stat_features(w['X'], w['y'])
+mb, sp, nz = w['member'] == 1, w['type'] == 2, w['member'] == 0
+np.set_printoptions(precision=3, suppress=True)
+print('feature order:', STAT_NAMES)
+print('mean | blanket :', F[mb].mean(0))
+print('mean | spouses :', F[sp].mean(0) if sp.sum() else 'n/a')
+print('mean | noise   :', F[nz].mean(0))
+assert F[mb, 0].mean() > F[nz, 0].mean(), 'no marginal separation'
+if sp.sum(): assert F[sp, 2].mean() > F[nz, 2].mean(), 'collider boost not firing on spouses'
+t0 = time.time(); [stat_features(w['X'], w['y']) for _ in range(20)]
+print('timing: %.1f ms / world' % ((time.time() - t0) / 20 * 1000))
+print('[VALIDATION] statistical operator separates blanket from noise -> PASS')

@@ -1,0 +1,161 @@
+{
+    "buffer_kwargs": {
+        "batch_dims_test": {
+            "20": {
+                "device": [
+                    1
+                ]
+            },
+            "70": {
+                "device": [
+                    1
+                ]
+            },
+            "200": {
+                "device": [
+                    1
+                ]
+            }
+        },
+        "batch_dims_train": {
+            "2": {
+                "device": [
+                    8,
+                    27
+                ],
+                "effective": 216
+            },
+            "5": {
+                "device": [
+                    8,
+                    23
+                ],
+                "effective": 184
+            },
+            "10": {
+                "device": [
+                    8,
+                    19
+                ],
+                "effective": 152
+            },
+            "20": {
+                "device": [
+                    8,
+                    13
+                ],
+                "effective": 104
+            },
+            "30": {
+                "device": [
+                    8,
+                    9
+                ],
+                "effective": 72
+            },
+            "40": {
+                "device": [
+                    8,
+                    7
+                ],
+                "effective": 56
+            },
+            "60": {
+                "device": [
+                    8,
+                    5
+                ],
+                "effective": 40
+            },
+            "80": {
+                "device": [
+                    8,
+                    3
+                ],
+                "effective": 24
+            },
+            "100": {
+                "device": [
+                    8,
+                    3
+                ],
+                "effective": 24
+            }
+        },
+        "buffer_class": "FIFOBuffer",
+        "buffer_size": 200,
+        "config": "/cluster/home/llorch/prog/avici-fork/dev/configs/universal-scm.yaml",
+        "n_listeners": 8,
+        "n_workers": null,
+        "seed": 0,
+        "train_n_observations_int": 50,
+        "train_n_observations_obs": 150
+    },
+    "inference_model_kwargs": {
+        "acyclicity": "<lambda>",
+        "acyclicity_pow_iters": 10,
+        "mask_diag": true,
+        "train_p_obs_only": 0.5
+    },
+    "neural_net_kwargs": {
+        "cosine_temp_init": 2.0,
+        "dim": 128,
+        "dropout": 0.1,
+        "key_size": 32,
+        "layers": 8,
+        "num_heads": 8,
+        "out_dim": null,
+        "widening_factor": 4
+    },
+    "train_script_kwargs": {
+        "SAB_num_heads": 8,
+        "acyc": true,
+        "acyc_burnin": 50000,
+        "acyc_dual_lr": 0.0001,
+        "acyc_inner_step": 500,
+        "acyc_polyak": 0.0001,
+        "acyc_powit": 10,
+        "acyc_warmup": true,
+        "bsu": 300,
+        "buffer_size": 200,
+        "checkpoint": true,
+        "checkpoint_dir": null,
+        "checkpoint_every": 10000,
+        "config": "/cluster/home/llorch/prog/avici-fork/dev/configs/universal-scm.yaml",
+        "cosine_temp_init": 2.0,
+        "dim": 128,
+        "dropout_rate": 0.1,
+        "eval_every": 5000,
+        "grad_clip_value": 1.0,
+        "key_size": 32,
+        "log_every": 500,
+        "lr": 3e-05,
+        "mask_diag": true,
+        "n_listeners": 8,
+        "n_loc": 8,
+        "n_steps": 300000,
+        "n_workers": null,
+        "online": true,
+        "out_dim": null,
+        "p_obs_only": 0.5,
+        "project": "universal",
+        "relaunch": true,
+        "relaunch_after": 1380.0,
+        "relaunch_str": "sbatch -A ls_krausea --time=23:58:00 -n 100 --mem-per-cpu=3000 --gpus=quadro_rtx_6000:8 -J \"config=universal-scm-gpu=8-6fc9b78\" -o \"slurm-config=universal-scm-gpu=8-6fc9b78.out\" ",
+        "run_name": "config=universal-scm-gpu=8-6fc9b78",
+        "seed": 0,
+        "smoke_test": false,
+        "train_n_int": 50,
+        "train_n_obs": 150,
+        "wandb_id": "194uy3xd",
+        "widening_factor": 4
+    },
+    "updater": {
+        "acyclicity_burnin": 50000,
+        "acyclicity_dual_lr": 0.0001,
+        "acyclicity_inner_step": 500,
+        "acyclicity_warmup": true,
+        "local_device_count": 8,
+        "polyak_rate": 0.0001
+    }
+}

@@ -1,0 +1,11 @@
+st = [h['step'] for h in hist]
+fig, ax = plt.subplots(1, 2, figsize=(11, 3.8))
+ax[0].plot(st, [h['loss'] for h in hist], label='total', color='#534AB7')
+ax[0].plot(st, [h['bce'] for h in hist], label='membership', color='#1D9E75')
+ax[0].plot(st, [h['ce_type'] for h in hist], label='type', color='#D85A30')
+ax[0].plot(st, [h['ce_orient'] for h in hist], label='orientation', color='#888')
+ax[0].set_xlabel('step'); ax[0].set_ylabel('loss'); ax[0].legend(); ax[0].set_title('Training loss')
+ax[1].plot(st, [h['train_auc'] for h in hist], color='#1D9E75')
+ax[1].axhline(0.5, ls='--', color='#888'); ax[1].set_ylim(0, 1)
+ax[1].set_xlabel('step'); ax[1].set_ylabel('AUC'); ax[1].set_title('Membership AUC')
+savefig(fig, '01_training_curves.png'); plt.show()
